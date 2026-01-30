@@ -21,8 +21,10 @@ import (
 const _ = connect.IsAtLeastVersion1_13_0
 
 const (
-	// TestServiceName is the fully-qualified name of the TestService service.
-	TestServiceName = "admin.TestService"
+	// AdminServiceName is the fully-qualified name of the AdminService service.
+	AdminServiceName = "admin.AdminService"
+	// AdminInnerServiceName is the fully-qualified name of the AdminInnerService service.
+	AdminInnerServiceName = "admin.AdminInnerService"
 )
 
 // These constants are the fully-qualified names of the RPCs defined in this package. They're
@@ -33,78 +35,245 @@ const (
 // reflection-formatted method names, remove the leading slash and convert the remaining slash to a
 // period.
 const (
-	// TestServiceTestProcedure is the fully-qualified name of the TestService's Test RPC.
-	TestServiceTestProcedure = "/admin.TestService/Test"
+	// AdminServiceLoginProcedure is the fully-qualified name of the AdminService's Login RPC.
+	AdminServiceLoginProcedure = "/admin.AdminService/Login"
+	// AdminServiceLogoutProcedure is the fully-qualified name of the AdminService's Logout RPC.
+	AdminServiceLogoutProcedure = "/admin.AdminService/Logout"
+	// AdminServiceRefreshTokenProcedure is the fully-qualified name of the AdminService's RefreshToken
+	// RPC.
+	AdminServiceRefreshTokenProcedure = "/admin.AdminService/RefreshToken"
+	// AdminInnerServiceCreateUserProcedure is the fully-qualified name of the AdminInnerService's
+	// CreateUser RPC.
+	AdminInnerServiceCreateUserProcedure = "/admin.AdminInnerService/CreateUser"
+	// AdminInnerServiceGetUserProcedure is the fully-qualified name of the AdminInnerService's GetUser
+	// RPC.
+	AdminInnerServiceGetUserProcedure = "/admin.AdminInnerService/GetUser"
 )
 
-// TestServiceClient is a client for the admin.TestService service.
-type TestServiceClient interface {
-	// Test
-	Test(context.Context, *connect.Request[admin.TestRequest]) (*connect.Response[admin.TestResponse], error)
+// AdminServiceClient is a client for the admin.AdminService service.
+type AdminServiceClient interface {
+	// 用户密码登录
+	Login(context.Context, *connect.Request[admin.LoginRequest]) (*connect.Response[admin.LoginResponse], error)
+	// 用户退出
+	Logout(context.Context, *connect.Request[admin.LogoutRequest]) (*connect.Response[admin.LogoutResponse], error)
+	// 刷新token
+	RefreshToken(context.Context, *connect.Request[admin.RefreshTokenRequest]) (*connect.Response[admin.RefreshTokenResponse], error)
 }
 
-// NewTestServiceClient constructs a client for the admin.TestService service. By default, it uses
+// NewAdminServiceClient constructs a client for the admin.AdminService service. By default, it uses
 // the Connect protocol with the binary Protobuf Codec, asks for gzipped responses, and sends
 // uncompressed requests. To use the gRPC or gRPC-Web protocols, supply the connect.WithGRPC() or
 // connect.WithGRPCWeb() options.
 //
 // The URL supplied here should be the base URL for the Connect or gRPC server (for example,
 // http://api.acme.com or https://acme.com/grpc).
-func NewTestServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...connect.ClientOption) TestServiceClient {
+func NewAdminServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...connect.ClientOption) AdminServiceClient {
 	baseURL = strings.TrimRight(baseURL, "/")
-	testServiceMethods := admin.File_admin_admin_proto.Services().ByName("TestService").Methods()
-	return &testServiceClient{
-		test: connect.NewClient[admin.TestRequest, admin.TestResponse](
+	adminServiceMethods := admin.File_admin_admin_proto.Services().ByName("AdminService").Methods()
+	return &adminServiceClient{
+		login: connect.NewClient[admin.LoginRequest, admin.LoginResponse](
 			httpClient,
-			baseURL+TestServiceTestProcedure,
-			connect.WithSchema(testServiceMethods.ByName("Test")),
+			baseURL+AdminServiceLoginProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("Login")),
+			connect.WithClientOptions(opts...),
+		),
+		logout: connect.NewClient[admin.LogoutRequest, admin.LogoutResponse](
+			httpClient,
+			baseURL+AdminServiceLogoutProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("Logout")),
+			connect.WithClientOptions(opts...),
+		),
+		refreshToken: connect.NewClient[admin.RefreshTokenRequest, admin.RefreshTokenResponse](
+			httpClient,
+			baseURL+AdminServiceRefreshTokenProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("RefreshToken")),
 			connect.WithClientOptions(opts...),
 		),
 	}
 }
 
-// testServiceClient implements TestServiceClient.
-type testServiceClient struct {
-	test *connect.Client[admin.TestRequest, admin.TestResponse]
+// adminServiceClient implements AdminServiceClient.
+type adminServiceClient struct {
+	login        *connect.Client[admin.LoginRequest, admin.LoginResponse]
+	logout       *connect.Client[admin.LogoutRequest, admin.LogoutResponse]
+	refreshToken *connect.Client[admin.RefreshTokenRequest, admin.RefreshTokenResponse]
 }
 
-// Test calls admin.TestService.Test.
-func (c *testServiceClient) Test(ctx context.Context, req *connect.Request[admin.TestRequest]) (*connect.Response[admin.TestResponse], error) {
-	return c.test.CallUnary(ctx, req)
+// Login calls admin.AdminService.Login.
+func (c *adminServiceClient) Login(ctx context.Context, req *connect.Request[admin.LoginRequest]) (*connect.Response[admin.LoginResponse], error) {
+	return c.login.CallUnary(ctx, req)
 }
 
-// TestServiceHandler is an implementation of the admin.TestService service.
-type TestServiceHandler interface {
-	// Test
-	Test(context.Context, *connect.Request[admin.TestRequest]) (*connect.Response[admin.TestResponse], error)
+// Logout calls admin.AdminService.Logout.
+func (c *adminServiceClient) Logout(ctx context.Context, req *connect.Request[admin.LogoutRequest]) (*connect.Response[admin.LogoutResponse], error) {
+	return c.logout.CallUnary(ctx, req)
 }
 
-// NewTestServiceHandler builds an HTTP handler from the service implementation. It returns the path
-// on which to mount the handler and the handler itself.
+// RefreshToken calls admin.AdminService.RefreshToken.
+func (c *adminServiceClient) RefreshToken(ctx context.Context, req *connect.Request[admin.RefreshTokenRequest]) (*connect.Response[admin.RefreshTokenResponse], error) {
+	return c.refreshToken.CallUnary(ctx, req)
+}
+
+// AdminServiceHandler is an implementation of the admin.AdminService service.
+type AdminServiceHandler interface {
+	// 用户密码登录
+	Login(context.Context, *connect.Request[admin.LoginRequest]) (*connect.Response[admin.LoginResponse], error)
+	// 用户退出
+	Logout(context.Context, *connect.Request[admin.LogoutRequest]) (*connect.Response[admin.LogoutResponse], error)
+	// 刷新token
+	RefreshToken(context.Context, *connect.Request[admin.RefreshTokenRequest]) (*connect.Response[admin.RefreshTokenResponse], error)
+}
+
+// NewAdminServiceHandler builds an HTTP handler from the service implementation. It returns the
+// path on which to mount the handler and the handler itself.
 //
 // By default, handlers support the Connect, gRPC, and gRPC-Web protocols with the binary Protobuf
 // and JSON codecs. They also support gzip compression.
-func NewTestServiceHandler(svc TestServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
-	testServiceMethods := admin.File_admin_admin_proto.Services().ByName("TestService").Methods()
-	testServiceTestHandler := connect.NewUnaryHandler(
-		TestServiceTestProcedure,
-		svc.Test,
-		connect.WithSchema(testServiceMethods.ByName("Test")),
+func NewAdminServiceHandler(svc AdminServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
+	adminServiceMethods := admin.File_admin_admin_proto.Services().ByName("AdminService").Methods()
+	adminServiceLoginHandler := connect.NewUnaryHandler(
+		AdminServiceLoginProcedure,
+		svc.Login,
+		connect.WithSchema(adminServiceMethods.ByName("Login")),
 		connect.WithHandlerOptions(opts...),
 	)
-	return "/admin.TestService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	adminServiceLogoutHandler := connect.NewUnaryHandler(
+		AdminServiceLogoutProcedure,
+		svc.Logout,
+		connect.WithSchema(adminServiceMethods.ByName("Logout")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminServiceRefreshTokenHandler := connect.NewUnaryHandler(
+		AdminServiceRefreshTokenProcedure,
+		svc.RefreshToken,
+		connect.WithSchema(adminServiceMethods.ByName("RefreshToken")),
+		connect.WithHandlerOptions(opts...),
+	)
+	return "/admin.AdminService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
-		case TestServiceTestProcedure:
-			testServiceTestHandler.ServeHTTP(w, r)
+		case AdminServiceLoginProcedure:
+			adminServiceLoginHandler.ServeHTTP(w, r)
+		case AdminServiceLogoutProcedure:
+			adminServiceLogoutHandler.ServeHTTP(w, r)
+		case AdminServiceRefreshTokenProcedure:
+			adminServiceRefreshTokenHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
 	})
 }
 
-// UnimplementedTestServiceHandler returns CodeUnimplemented from all methods.
-type UnimplementedTestServiceHandler struct{}
+// UnimplementedAdminServiceHandler returns CodeUnimplemented from all methods.
+type UnimplementedAdminServiceHandler struct{}
 
-func (UnimplementedTestServiceHandler) Test(context.Context, *connect.Request[admin.TestRequest]) (*connect.Response[admin.TestResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("admin.TestService.Test is not implemented"))
+func (UnimplementedAdminServiceHandler) Login(context.Context, *connect.Request[admin.LoginRequest]) (*connect.Response[admin.LoginResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("admin.AdminService.Login is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) Logout(context.Context, *connect.Request[admin.LogoutRequest]) (*connect.Response[admin.LogoutResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("admin.AdminService.Logout is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) RefreshToken(context.Context, *connect.Request[admin.RefreshTokenRequest]) (*connect.Response[admin.RefreshTokenResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("admin.AdminService.RefreshToken is not implemented"))
+}
+
+// AdminInnerServiceClient is a client for the admin.AdminInnerService service.
+type AdminInnerServiceClient interface {
+	// 创建用户
+	CreateUser(context.Context, *connect.Request[admin.CreateUserRequest]) (*connect.Response[admin.CreateUserResponse], error)
+	// 获取用户详情
+	GetUser(context.Context, *connect.Request[admin.GetUserRequest]) (*connect.Response[admin.GetUserResponse], error)
+}
+
+// NewAdminInnerServiceClient constructs a client for the admin.AdminInnerService service. By
+// default, it uses the Connect protocol with the binary Protobuf Codec, asks for gzipped responses,
+// and sends uncompressed requests. To use the gRPC or gRPC-Web protocols, supply the
+// connect.WithGRPC() or connect.WithGRPCWeb() options.
+//
+// The URL supplied here should be the base URL for the Connect or gRPC server (for example,
+// http://api.acme.com or https://acme.com/grpc).
+func NewAdminInnerServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...connect.ClientOption) AdminInnerServiceClient {
+	baseURL = strings.TrimRight(baseURL, "/")
+	adminInnerServiceMethods := admin.File_admin_admin_proto.Services().ByName("AdminInnerService").Methods()
+	return &adminInnerServiceClient{
+		createUser: connect.NewClient[admin.CreateUserRequest, admin.CreateUserResponse](
+			httpClient,
+			baseURL+AdminInnerServiceCreateUserProcedure,
+			connect.WithSchema(adminInnerServiceMethods.ByName("CreateUser")),
+			connect.WithClientOptions(opts...),
+		),
+		getUser: connect.NewClient[admin.GetUserRequest, admin.GetUserResponse](
+			httpClient,
+			baseURL+AdminInnerServiceGetUserProcedure,
+			connect.WithSchema(adminInnerServiceMethods.ByName("GetUser")),
+			connect.WithClientOptions(opts...),
+		),
+	}
+}
+
+// adminInnerServiceClient implements AdminInnerServiceClient.
+type adminInnerServiceClient struct {
+	createUser *connect.Client[admin.CreateUserRequest, admin.CreateUserResponse]
+	getUser    *connect.Client[admin.GetUserRequest, admin.GetUserResponse]
+}
+
+// CreateUser calls admin.AdminInnerService.CreateUser.
+func (c *adminInnerServiceClient) CreateUser(ctx context.Context, req *connect.Request[admin.CreateUserRequest]) (*connect.Response[admin.CreateUserResponse], error) {
+	return c.createUser.CallUnary(ctx, req)
+}
+
+// GetUser calls admin.AdminInnerService.GetUser.
+func (c *adminInnerServiceClient) GetUser(ctx context.Context, req *connect.Request[admin.GetUserRequest]) (*connect.Response[admin.GetUserResponse], error) {
+	return c.getUser.CallUnary(ctx, req)
+}
+
+// AdminInnerServiceHandler is an implementation of the admin.AdminInnerService service.
+type AdminInnerServiceHandler interface {
+	// 创建用户
+	CreateUser(context.Context, *connect.Request[admin.CreateUserRequest]) (*connect.Response[admin.CreateUserResponse], error)
+	// 获取用户详情
+	GetUser(context.Context, *connect.Request[admin.GetUserRequest]) (*connect.Response[admin.GetUserResponse], error)
+}
+
+// NewAdminInnerServiceHandler builds an HTTP handler from the service implementation. It returns
+// the path on which to mount the handler and the handler itself.
+//
+// By default, handlers support the Connect, gRPC, and gRPC-Web protocols with the binary Protobuf
+// and JSON codecs. They also support gzip compression.
+func NewAdminInnerServiceHandler(svc AdminInnerServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
+	adminInnerServiceMethods := admin.File_admin_admin_proto.Services().ByName("AdminInnerService").Methods()
+	adminInnerServiceCreateUserHandler := connect.NewUnaryHandler(
+		AdminInnerServiceCreateUserProcedure,
+		svc.CreateUser,
+		connect.WithSchema(adminInnerServiceMethods.ByName("CreateUser")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminInnerServiceGetUserHandler := connect.NewUnaryHandler(
+		AdminInnerServiceGetUserProcedure,
+		svc.GetUser,
+		connect.WithSchema(adminInnerServiceMethods.ByName("GetUser")),
+		connect.WithHandlerOptions(opts...),
+	)
+	return "/admin.AdminInnerService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case AdminInnerServiceCreateUserProcedure:
+			adminInnerServiceCreateUserHandler.ServeHTTP(w, r)
+		case AdminInnerServiceGetUserProcedure:
+			adminInnerServiceGetUserHandler.ServeHTTP(w, r)
+		default:
+			http.NotFound(w, r)
+		}
+	})
+}
+
+// UnimplementedAdminInnerServiceHandler returns CodeUnimplemented from all methods.
+type UnimplementedAdminInnerServiceHandler struct{}
+
+func (UnimplementedAdminInnerServiceHandler) CreateUser(context.Context, *connect.Request[admin.CreateUserRequest]) (*connect.Response[admin.CreateUserResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("admin.AdminInnerService.CreateUser is not implemented"))
+}
+
+func (UnimplementedAdminInnerServiceHandler) GetUser(context.Context, *connect.Request[admin.GetUserRequest]) (*connect.Response[admin.GetUserResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("admin.AdminInnerService.GetUser is not implemented"))
 }
