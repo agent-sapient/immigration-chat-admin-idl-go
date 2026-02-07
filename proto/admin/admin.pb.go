@@ -4184,26 +4184,26 @@ const file_admin_admin_proto_rawDesc = "" +
 	"\x11AdminInnerService\x12Z\n" +
 	"\n" +
 	"CreateUser\x12\x18.admin.CreateUserRequest\x1a\x19.admin.CreateUserResponse\"\x17\x82\xd3\xe4\x93\x02\x11:\x01*\"\f/inner/users\x12X\n" +
-	"\aGetUser\x12\x15.admin.GetUserRequest\x1a\x16.admin.GetUserResponse\"\x1e\x82\xd3\xe4\x93\x02\x18\x12\x16/inner/users/{user_id}2\xc9\x04\n" +
-	"\x10AdminUserService\x125\n" +
-	"\bGetUsers\x12\x10.admin.UserQuery\x1a\x17.admin.UserListResponse\x12@\n" +
-	"\rGetUserDetail\x12\x14.admin.UserIdRequest\x1a\x19.admin.UserDetailResponse\x12N\n" +
-	"\x11GetUserOperations\x12\x1a.admin.UserOperationsQuery\x1a\x1d.admin.UserOperationsResponse\x12>\n" +
-	"\fActivateUser\x12\x1a.admin.ActivateUserRequest\x1a\x12.admin.ApiResponse\x124\n" +
-	"\aBanUser\x12\x15.admin.BanUserRequest\x1a\x12.admin.ApiResponse\x128\n" +
-	"\tUnbanUser\x12\x17.admin.UnbanUserRequest\x1a\x12.admin.ApiResponse\x12:\n" +
+	"\aGetUser\x12\x15.admin.GetUserRequest\x1a\x16.admin.GetUserResponse\"\x1e\x82\xd3\xe4\x93\x02\x18\x12\x16/inner/users/{user_id}2\xde\x06\n" +
+	"\x10AdminUserService\x12R\n" +
+	"\bGetUsers\x12\x10.admin.UserQuery\x1a\x17.admin.UserListResponse\"\x1b\x82\xd3\xe4\x93\x02\x15:\x01*\"\x10/api/users/query\x12^\n" +
+	"\rGetUserDetail\x12\x14.admin.UserIdRequest\x1a\x19.admin.UserDetailResponse\"\x1c\x82\xd3\xe4\x93\x02\x16\x12\x14/api/users/{user_id}\x12v\n" +
+	"\x11GetUserOperations\x12\x1a.admin.UserOperationsQuery\x1a\x1d.admin.UserOperationsResponse\"&\x82\xd3\xe4\x93\x02 :\x01*\"\x1b/api/users/operations/query\x12^\n" +
+	"\fActivateUser\x12\x1a.admin.ActivateUserRequest\x1a\x12.admin.ApiResponse\"\x1e\x82\xd3\xe4\x93\x02\x18:\x01*\"\x13/api/users/activate\x12O\n" +
+	"\aBanUser\x12\x15.admin.BanUserRequest\x1a\x12.admin.ApiResponse\"\x19\x82\xd3\xe4\x93\x02\x13:\x01*\"\x0e/api/users/ban\x12U\n" +
+	"\tUnbanUser\x12\x17.admin.UnbanUserRequest\x1a\x12.admin.ApiResponse\"\x1b\x82\xd3\xe4\x93\x02\x15:\x01*\"\x10/api/users/unban\x12X\n" +
 	"\n" +
-	"DeleteUser\x12\x18.admin.DeleteUserRequest\x1a\x12.admin.ApiResponse\x12D\n" +
-	"\x11UpdateUserProfile\x12\x1b.admin.UpdateProfileRequest\x1a\x12.admin.ApiResponse\x12:\n" +
-	"\fSetUserQuota\x12\x16.admin.SetQuotaRequest\x1a\x12.admin.ApiResponse2\xcd\x03\n" +
-	"\x12AdminInviteService\x12G\n" +
-	"\x0eGetInviteCodes\x12\x16.admin.InviteCodeQuery\x1a\x1d.admin.InviteCodeListResponse\x12P\n" +
-	"\x0fBatchQueryCodes\x12\x1d.admin.BatchQueryCodesRequest\x1a\x1e.admin.BatchQueryCodesResponse\x12B\n" +
-	"\x0eGetInviteChain\x12\x14.admin.UserIdRequest\x1a\x1a.admin.InviteChainResponse\x12J\n" +
-	"\rGenerateCodes\x12\x1b.admin.GenerateCodesRequest\x1a\x1c.admin.GenerateCodesResponse\x12P\n" +
-	"\x0fRegenerateCodes\x12\x1d.admin.RegenerateCodesRequest\x1a\x1e.admin.RegenerateCodesResponse\x12:\n" +
+	"DeleteUser\x12\x18.admin.DeleteUserRequest\x1a\x12.admin.ApiResponse\"\x1c\x82\xd3\xe4\x93\x02\x16:\x01*\"\x11/api/users/delete\x12c\n" +
+	"\x11UpdateUserProfile\x12\x1b.admin.UpdateProfileRequest\x1a\x12.admin.ApiResponse\"\x1d\x82\xd3\xe4\x93\x02\x17:\x01*\"\x12/api/users/profile\x12W\n" +
+	"\fSetUserQuota\x12\x16.admin.SetQuotaRequest\x1a\x12.admin.ApiResponse\"\x1b\x82\xd3\xe4\x93\x02\x15:\x01*\"\x10/api/users/quota2\xbb\x05\n" +
+	"\x12AdminInviteService\x12k\n" +
+	"\x0eGetInviteCodes\x12\x16.admin.InviteCodeQuery\x1a\x1d.admin.InviteCodeListResponse\"\"\x82\xd3\xe4\x93\x02\x1c:\x01*\"\x17/api/invite-codes/query\x12z\n" +
+	"\x0fBatchQueryCodes\x12\x1d.admin.BatchQueryCodesRequest\x1a\x1e.admin.BatchQueryCodesResponse\"(\x82\xd3\xe4\x93\x02\":\x01*\"\x1d/api/invite-codes/batch-query\x12m\n" +
+	"\x0eGetInviteChain\x12\x14.admin.UserIdRequest\x1a\x1a.admin.InviteChainResponse\")\x82\xd3\xe4\x93\x02#\x12!/api/users/{user_id}/invite-chain\x12q\n" +
+	"\rGenerateCodes\x12\x1b.admin.GenerateCodesRequest\x1a\x1c.admin.GenerateCodesResponse\"%\x82\xd3\xe4\x93\x02\x1f:\x01*\"\x1a/api/invite-codes/generate\x12y\n" +
+	"\x0fRegenerateCodes\x12\x1d.admin.RegenerateCodesRequest\x1a\x1e.admin.RegenerateCodesResponse\"'\x82\xd3\xe4\x93\x02!:\x01*\"\x1c/api/invite-codes/regenerate\x12_\n" +
 	"\n" +
-	"RevokeCode\x12\x18.admin.RevokeCodeRequest\x1a\x12.admin.ApiResponseBDZBgithub.com/agent-sapient/immigration-chat-admin-idl-go/proto/adminb\x06proto3"
+	"RevokeCode\x12\x18.admin.RevokeCodeRequest\x1a\x12.admin.ApiResponse\"#\x82\xd3\xe4\x93\x02\x1d:\x01*\"\x18/api/invite-codes/revokeBDZBgithub.com/agent-sapient/immigration-chat-admin-idl-go/proto/adminb\x06proto3"
 
 var (
 	file_admin_admin_proto_rawDescOnce sync.Once
