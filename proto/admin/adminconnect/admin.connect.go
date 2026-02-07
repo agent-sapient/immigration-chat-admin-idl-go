@@ -25,6 +25,10 @@ const (
 	AdminServiceName = "admin.AdminService"
 	// AdminInnerServiceName is the fully-qualified name of the AdminInnerService service.
 	AdminInnerServiceName = "admin.AdminInnerService"
+	// AdminUserServiceName is the fully-qualified name of the AdminUserService service.
+	AdminUserServiceName = "admin.AdminUserService"
+	// AdminInviteServiceName is the fully-qualified name of the AdminInviteService service.
+	AdminInviteServiceName = "admin.AdminInviteService"
 )
 
 // These constants are the fully-qualified names of the RPCs defined in this package. They're
@@ -48,6 +52,51 @@ const (
 	// AdminInnerServiceGetUserProcedure is the fully-qualified name of the AdminInnerService's GetUser
 	// RPC.
 	AdminInnerServiceGetUserProcedure = "/admin.AdminInnerService/GetUser"
+	// AdminUserServiceGetUsersProcedure is the fully-qualified name of the AdminUserService's GetUsers
+	// RPC.
+	AdminUserServiceGetUsersProcedure = "/admin.AdminUserService/GetUsers"
+	// AdminUserServiceGetUserDetailProcedure is the fully-qualified name of the AdminUserService's
+	// GetUserDetail RPC.
+	AdminUserServiceGetUserDetailProcedure = "/admin.AdminUserService/GetUserDetail"
+	// AdminUserServiceGetUserOperationsProcedure is the fully-qualified name of the AdminUserService's
+	// GetUserOperations RPC.
+	AdminUserServiceGetUserOperationsProcedure = "/admin.AdminUserService/GetUserOperations"
+	// AdminUserServiceActivateUserProcedure is the fully-qualified name of the AdminUserService's
+	// ActivateUser RPC.
+	AdminUserServiceActivateUserProcedure = "/admin.AdminUserService/ActivateUser"
+	// AdminUserServiceBanUserProcedure is the fully-qualified name of the AdminUserService's BanUser
+	// RPC.
+	AdminUserServiceBanUserProcedure = "/admin.AdminUserService/BanUser"
+	// AdminUserServiceUnbanUserProcedure is the fully-qualified name of the AdminUserService's
+	// UnbanUser RPC.
+	AdminUserServiceUnbanUserProcedure = "/admin.AdminUserService/UnbanUser"
+	// AdminUserServiceDeleteUserProcedure is the fully-qualified name of the AdminUserService's
+	// DeleteUser RPC.
+	AdminUserServiceDeleteUserProcedure = "/admin.AdminUserService/DeleteUser"
+	// AdminUserServiceUpdateUserProfileProcedure is the fully-qualified name of the AdminUserService's
+	// UpdateUserProfile RPC.
+	AdminUserServiceUpdateUserProfileProcedure = "/admin.AdminUserService/UpdateUserProfile"
+	// AdminUserServiceSetUserQuotaProcedure is the fully-qualified name of the AdminUserService's
+	// SetUserQuota RPC.
+	AdminUserServiceSetUserQuotaProcedure = "/admin.AdminUserService/SetUserQuota"
+	// AdminInviteServiceGetInviteCodesProcedure is the fully-qualified name of the AdminInviteService's
+	// GetInviteCodes RPC.
+	AdminInviteServiceGetInviteCodesProcedure = "/admin.AdminInviteService/GetInviteCodes"
+	// AdminInviteServiceBatchQueryCodesProcedure is the fully-qualified name of the
+	// AdminInviteService's BatchQueryCodes RPC.
+	AdminInviteServiceBatchQueryCodesProcedure = "/admin.AdminInviteService/BatchQueryCodes"
+	// AdminInviteServiceGetInviteChainProcedure is the fully-qualified name of the AdminInviteService's
+	// GetInviteChain RPC.
+	AdminInviteServiceGetInviteChainProcedure = "/admin.AdminInviteService/GetInviteChain"
+	// AdminInviteServiceGenerateCodesProcedure is the fully-qualified name of the AdminInviteService's
+	// GenerateCodes RPC.
+	AdminInviteServiceGenerateCodesProcedure = "/admin.AdminInviteService/GenerateCodes"
+	// AdminInviteServiceRegenerateCodesProcedure is the fully-qualified name of the
+	// AdminInviteService's RegenerateCodes RPC.
+	AdminInviteServiceRegenerateCodesProcedure = "/admin.AdminInviteService/RegenerateCodes"
+	// AdminInviteServiceRevokeCodeProcedure is the fully-qualified name of the AdminInviteService's
+	// RevokeCode RPC.
+	AdminInviteServiceRevokeCodeProcedure = "/admin.AdminInviteService/RevokeCode"
 )
 
 // AdminServiceClient is a client for the admin.AdminService service.
@@ -276,4 +325,978 @@ func (UnimplementedAdminInnerServiceHandler) CreateUser(context.Context, *connec
 
 func (UnimplementedAdminInnerServiceHandler) GetUser(context.Context, *connect.Request[admin.GetUserRequest]) (*connect.Response[admin.GetUserResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("admin.AdminInnerService.GetUser is not implemented"))
+}
+
+// AdminUserServiceClient is a client for the admin.AdminUserService service.
+type AdminUserServiceClient interface {
+	// GetUsers - 获取用户列表
+	//
+	// 功能: 分页查询用户列表，支持多维度筛选和排序
+	//
+	// 筛选条件:
+	// - keyword: 关键词搜索（手机号/昵称/机构名/user_id）
+	// - status: 状态筛选（支持多选）
+	// - identity_type: 身份类型（individual/organization）
+	// - quota_type: 额度类型（default/custom/unlimited）
+	// - activated_by: 激活方式（auto_release/invite/admin）
+	// - 时间范围: 注册时间、激活时间
+	// - 邀请关系: 邀请码、邀请人
+	//
+	// 返回: 用户列表（包含基本信息、额度信息、邀请码使用统计）
+	GetUsers(context.Context, *connect.Request[admin.UserQuery]) (*connect.Response[admin.UserListResponse], error)
+	// GetUserDetail - 获取用户详情
+	//
+	// 功能: 获取单个用户的完整信息
+	//
+	// 返回内容:
+	// - 基本信息（手机号、昵称、身份类型、机构名等）
+	// - 状态信息（当前状态、状态变更时间、激活信息）
+	// - 邀请人信息（谁邀请的、使用的邀请码）
+	// - 额度信息（类型、限额、今日用量）
+	// - 手机号变更历史
+	// - 用户的邀请码列表（3 个）
+	//
+	// 错误码:
+	// - 404: 用户不存在
+	GetUserDetail(context.Context, *connect.Request[admin.UserIdRequest]) (*connect.Response[admin.UserDetailResponse], error)
+	// GetUserOperations - 获取用户操作记录
+	//
+	// 功能: 查询针对指定用户的所有管理员操作记录
+	//
+	// 用途: 审计追踪，查看用户被执行过哪些操作
+	//
+	// 记录内容:
+	// - 操作类型（activate/ban/unban/delete/set_quota 等）
+	// - 操作参数（如设置的额度值）
+	// - 操作原因
+	// - 操作者（admin_id）
+	// - 操作时间
+	GetUserOperations(context.Context, *connect.Request[admin.UserOperationsQuery]) (*connect.Response[admin.UserOperationsResponse], error)
+	// ActivateUser - 激活用户（后台手动激活）
+	//
+	// 功能: 将 UNAPPLIED 或 WAITING 状态的用户直接激活为 ACTIVE
+	//
+	// 业务逻辑:
+	// 1. 用户状态变为 ACTIVE
+	// 2. 激活来源记录为 ADMIN
+	// 3. 为用户生成 3 个普通邀请码
+	//
+	// 参数要求:
+	// - user_id: 必填
+	// - reason: 必填（激活原因，用于审计）
+	//
+	// 前置条件:
+	// - 用户状态为 UNAPPLIED 或 WAITING
+	//
+	// 错误码:
+	// - 400: 状态不允许激活（已激活/已封禁/已删除）
+	// - 404: 用户不存在
+	ActivateUser(context.Context, *connect.Request[admin.ActivateUserRequest]) (*connect.Response[admin.ApiResponse], error)
+	// BanUser - 封禁用户
+	//
+	// 功能: 封禁活跃用户，立即踢下线
+	//
+	// 业务逻辑:
+	// 1. 用户状态变为 BANNED
+	// 2. 撤销用户所有 token（立即踢下线）
+	// 3. 暂停用户所有未使用的邀请码（解封时恢复）
+	//
+	// 参数要求:
+	// - user_id: 必填
+	// - reason: 必填（封禁原因，用于审计和用户申诉）
+	//
+	// 前置条件:
+	// - 用户状态为 ACTIVE
+	//
+	// 错误码:
+	// - 400: 状态不允许封禁（非 ACTIVE 状态）
+	// - 404: 用户不存在
+	BanUser(context.Context, *connect.Request[admin.BanUserRequest]) (*connect.Response[admin.ApiResponse], error)
+	// UnbanUser - 解封用户
+	//
+	// 功能: 解除用户封禁，恢复正常使用
+	//
+	// 业务逻辑:
+	// 1. 用户状态恢复为 ACTIVE
+	// 2. 恢复因封禁而暂停的邀请码
+	// 3. 用户原有权益（额度配置等）保留
+	//
+	// 参数要求:
+	// - user_id: 必填
+	// - reason: 必填（解封原因）
+	//
+	// 前置条件:
+	// - 用户状态为 BANNED
+	//
+	// 错误码:
+	// - 400: 用户非封禁状态
+	// - 404: 用户不存在
+	UnbanUser(context.Context, *connect.Request[admin.UnbanUserRequest]) (*connect.Response[admin.ApiResponse], error)
+	// DeleteUser - 删除用户（软删除）
+	//
+	// 功能: 删除用户，释放账号标识
+	//
+	// ⚠️ 警告: 此操作不可逆！
+	//
+	// 业务逻辑:
+	// 1. 用户状态变为 DELETED
+	// 2. 清空手机号、openid、unionid（释放标识，允许重新注册）
+	// 3. 作废所有未使用的邀请码
+	// 4. 撤销所有 token（立即踢下线）
+	// 5. 记录注销日志（用于审计）
+	//
+	// 参数要求:
+	// - user_id: 必填
+	// - reason: 必填（删除原因，用于审计）
+	//
+	// 错误码:
+	// - 400: 用户已被删除
+	// - 404: 用户不存在
+	DeleteUser(context.Context, *connect.Request[admin.DeleteUserRequest]) (*connect.Response[admin.ApiResponse], error)
+	// UpdateUserProfile - 修改用户资料
+	//
+	// 功能: 修改用户的身份类型、机构名等资料
+	//
+	// 可修改字段:
+	// - identity_type: 身份类型（individual/organization）
+	// - org_name: 机构名称
+	//
+	// 参数要求:
+	// - user_id: 必填
+	// - reason: 必填
+	// - 至少提供一个要修改的字段
+	//
+	// 错误码:
+	// - 404: 用户不存在
+	UpdateUserProfile(context.Context, *connect.Request[admin.UpdateProfileRequest]) (*connect.Response[admin.ApiResponse], error)
+	// SetUserQuota - 设置用户额度
+	//
+	// 功能: 设置用户的每日使用限额或不限额状态
+	//
+	// 使用场景:
+	// 1. 设置自定义限额: is_unlimited=false, daily_limit=100
+	// 2. 设置不限额: is_unlimited=true
+	// 3. 恢复默认限额: is_unlimited=false, 不传 daily_limit
+	// 4. 关闭不限额: is_unlimited=false（恢复默认 50/天）
+	//
+	// 参数要求:
+	// - user_id: 必填
+	// - reason: 必填
+	//
+	// 业务规则:
+	// - 限额调整立即生效
+	// - 若将限额调低到 < 今日已用，用户立即被拦截到次日
+	//
+	// 错误码:
+	// - 404: 用户不存在
+	SetUserQuota(context.Context, *connect.Request[admin.SetQuotaRequest]) (*connect.Response[admin.ApiResponse], error)
+}
+
+// NewAdminUserServiceClient constructs a client for the admin.AdminUserService service. By default,
+// it uses the Connect protocol with the binary Protobuf Codec, asks for gzipped responses, and
+// sends uncompressed requests. To use the gRPC or gRPC-Web protocols, supply the connect.WithGRPC()
+// or connect.WithGRPCWeb() options.
+//
+// The URL supplied here should be the base URL for the Connect or gRPC server (for example,
+// http://api.acme.com or https://acme.com/grpc).
+func NewAdminUserServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...connect.ClientOption) AdminUserServiceClient {
+	baseURL = strings.TrimRight(baseURL, "/")
+	adminUserServiceMethods := admin.File_admin_admin_proto.Services().ByName("AdminUserService").Methods()
+	return &adminUserServiceClient{
+		getUsers: connect.NewClient[admin.UserQuery, admin.UserListResponse](
+			httpClient,
+			baseURL+AdminUserServiceGetUsersProcedure,
+			connect.WithSchema(adminUserServiceMethods.ByName("GetUsers")),
+			connect.WithClientOptions(opts...),
+		),
+		getUserDetail: connect.NewClient[admin.UserIdRequest, admin.UserDetailResponse](
+			httpClient,
+			baseURL+AdminUserServiceGetUserDetailProcedure,
+			connect.WithSchema(adminUserServiceMethods.ByName("GetUserDetail")),
+			connect.WithClientOptions(opts...),
+		),
+		getUserOperations: connect.NewClient[admin.UserOperationsQuery, admin.UserOperationsResponse](
+			httpClient,
+			baseURL+AdminUserServiceGetUserOperationsProcedure,
+			connect.WithSchema(adminUserServiceMethods.ByName("GetUserOperations")),
+			connect.WithClientOptions(opts...),
+		),
+		activateUser: connect.NewClient[admin.ActivateUserRequest, admin.ApiResponse](
+			httpClient,
+			baseURL+AdminUserServiceActivateUserProcedure,
+			connect.WithSchema(adminUserServiceMethods.ByName("ActivateUser")),
+			connect.WithClientOptions(opts...),
+		),
+		banUser: connect.NewClient[admin.BanUserRequest, admin.ApiResponse](
+			httpClient,
+			baseURL+AdminUserServiceBanUserProcedure,
+			connect.WithSchema(adminUserServiceMethods.ByName("BanUser")),
+			connect.WithClientOptions(opts...),
+		),
+		unbanUser: connect.NewClient[admin.UnbanUserRequest, admin.ApiResponse](
+			httpClient,
+			baseURL+AdminUserServiceUnbanUserProcedure,
+			connect.WithSchema(adminUserServiceMethods.ByName("UnbanUser")),
+			connect.WithClientOptions(opts...),
+		),
+		deleteUser: connect.NewClient[admin.DeleteUserRequest, admin.ApiResponse](
+			httpClient,
+			baseURL+AdminUserServiceDeleteUserProcedure,
+			connect.WithSchema(adminUserServiceMethods.ByName("DeleteUser")),
+			connect.WithClientOptions(opts...),
+		),
+		updateUserProfile: connect.NewClient[admin.UpdateProfileRequest, admin.ApiResponse](
+			httpClient,
+			baseURL+AdminUserServiceUpdateUserProfileProcedure,
+			connect.WithSchema(adminUserServiceMethods.ByName("UpdateUserProfile")),
+			connect.WithClientOptions(opts...),
+		),
+		setUserQuota: connect.NewClient[admin.SetQuotaRequest, admin.ApiResponse](
+			httpClient,
+			baseURL+AdminUserServiceSetUserQuotaProcedure,
+			connect.WithSchema(adminUserServiceMethods.ByName("SetUserQuota")),
+			connect.WithClientOptions(opts...),
+		),
+	}
+}
+
+// adminUserServiceClient implements AdminUserServiceClient.
+type adminUserServiceClient struct {
+	getUsers          *connect.Client[admin.UserQuery, admin.UserListResponse]
+	getUserDetail     *connect.Client[admin.UserIdRequest, admin.UserDetailResponse]
+	getUserOperations *connect.Client[admin.UserOperationsQuery, admin.UserOperationsResponse]
+	activateUser      *connect.Client[admin.ActivateUserRequest, admin.ApiResponse]
+	banUser           *connect.Client[admin.BanUserRequest, admin.ApiResponse]
+	unbanUser         *connect.Client[admin.UnbanUserRequest, admin.ApiResponse]
+	deleteUser        *connect.Client[admin.DeleteUserRequest, admin.ApiResponse]
+	updateUserProfile *connect.Client[admin.UpdateProfileRequest, admin.ApiResponse]
+	setUserQuota      *connect.Client[admin.SetQuotaRequest, admin.ApiResponse]
+}
+
+// GetUsers calls admin.AdminUserService.GetUsers.
+func (c *adminUserServiceClient) GetUsers(ctx context.Context, req *connect.Request[admin.UserQuery]) (*connect.Response[admin.UserListResponse], error) {
+	return c.getUsers.CallUnary(ctx, req)
+}
+
+// GetUserDetail calls admin.AdminUserService.GetUserDetail.
+func (c *adminUserServiceClient) GetUserDetail(ctx context.Context, req *connect.Request[admin.UserIdRequest]) (*connect.Response[admin.UserDetailResponse], error) {
+	return c.getUserDetail.CallUnary(ctx, req)
+}
+
+// GetUserOperations calls admin.AdminUserService.GetUserOperations.
+func (c *adminUserServiceClient) GetUserOperations(ctx context.Context, req *connect.Request[admin.UserOperationsQuery]) (*connect.Response[admin.UserOperationsResponse], error) {
+	return c.getUserOperations.CallUnary(ctx, req)
+}
+
+// ActivateUser calls admin.AdminUserService.ActivateUser.
+func (c *adminUserServiceClient) ActivateUser(ctx context.Context, req *connect.Request[admin.ActivateUserRequest]) (*connect.Response[admin.ApiResponse], error) {
+	return c.activateUser.CallUnary(ctx, req)
+}
+
+// BanUser calls admin.AdminUserService.BanUser.
+func (c *adminUserServiceClient) BanUser(ctx context.Context, req *connect.Request[admin.BanUserRequest]) (*connect.Response[admin.ApiResponse], error) {
+	return c.banUser.CallUnary(ctx, req)
+}
+
+// UnbanUser calls admin.AdminUserService.UnbanUser.
+func (c *adminUserServiceClient) UnbanUser(ctx context.Context, req *connect.Request[admin.UnbanUserRequest]) (*connect.Response[admin.ApiResponse], error) {
+	return c.unbanUser.CallUnary(ctx, req)
+}
+
+// DeleteUser calls admin.AdminUserService.DeleteUser.
+func (c *adminUserServiceClient) DeleteUser(ctx context.Context, req *connect.Request[admin.DeleteUserRequest]) (*connect.Response[admin.ApiResponse], error) {
+	return c.deleteUser.CallUnary(ctx, req)
+}
+
+// UpdateUserProfile calls admin.AdminUserService.UpdateUserProfile.
+func (c *adminUserServiceClient) UpdateUserProfile(ctx context.Context, req *connect.Request[admin.UpdateProfileRequest]) (*connect.Response[admin.ApiResponse], error) {
+	return c.updateUserProfile.CallUnary(ctx, req)
+}
+
+// SetUserQuota calls admin.AdminUserService.SetUserQuota.
+func (c *adminUserServiceClient) SetUserQuota(ctx context.Context, req *connect.Request[admin.SetQuotaRequest]) (*connect.Response[admin.ApiResponse], error) {
+	return c.setUserQuota.CallUnary(ctx, req)
+}
+
+// AdminUserServiceHandler is an implementation of the admin.AdminUserService service.
+type AdminUserServiceHandler interface {
+	// GetUsers - 获取用户列表
+	//
+	// 功能: 分页查询用户列表，支持多维度筛选和排序
+	//
+	// 筛选条件:
+	// - keyword: 关键词搜索（手机号/昵称/机构名/user_id）
+	// - status: 状态筛选（支持多选）
+	// - identity_type: 身份类型（individual/organization）
+	// - quota_type: 额度类型（default/custom/unlimited）
+	// - activated_by: 激活方式（auto_release/invite/admin）
+	// - 时间范围: 注册时间、激活时间
+	// - 邀请关系: 邀请码、邀请人
+	//
+	// 返回: 用户列表（包含基本信息、额度信息、邀请码使用统计）
+	GetUsers(context.Context, *connect.Request[admin.UserQuery]) (*connect.Response[admin.UserListResponse], error)
+	// GetUserDetail - 获取用户详情
+	//
+	// 功能: 获取单个用户的完整信息
+	//
+	// 返回内容:
+	// - 基本信息（手机号、昵称、身份类型、机构名等）
+	// - 状态信息（当前状态、状态变更时间、激活信息）
+	// - 邀请人信息（谁邀请的、使用的邀请码）
+	// - 额度信息（类型、限额、今日用量）
+	// - 手机号变更历史
+	// - 用户的邀请码列表（3 个）
+	//
+	// 错误码:
+	// - 404: 用户不存在
+	GetUserDetail(context.Context, *connect.Request[admin.UserIdRequest]) (*connect.Response[admin.UserDetailResponse], error)
+	// GetUserOperations - 获取用户操作记录
+	//
+	// 功能: 查询针对指定用户的所有管理员操作记录
+	//
+	// 用途: 审计追踪，查看用户被执行过哪些操作
+	//
+	// 记录内容:
+	// - 操作类型（activate/ban/unban/delete/set_quota 等）
+	// - 操作参数（如设置的额度值）
+	// - 操作原因
+	// - 操作者（admin_id）
+	// - 操作时间
+	GetUserOperations(context.Context, *connect.Request[admin.UserOperationsQuery]) (*connect.Response[admin.UserOperationsResponse], error)
+	// ActivateUser - 激活用户（后台手动激活）
+	//
+	// 功能: 将 UNAPPLIED 或 WAITING 状态的用户直接激活为 ACTIVE
+	//
+	// 业务逻辑:
+	// 1. 用户状态变为 ACTIVE
+	// 2. 激活来源记录为 ADMIN
+	// 3. 为用户生成 3 个普通邀请码
+	//
+	// 参数要求:
+	// - user_id: 必填
+	// - reason: 必填（激活原因，用于审计）
+	//
+	// 前置条件:
+	// - 用户状态为 UNAPPLIED 或 WAITING
+	//
+	// 错误码:
+	// - 400: 状态不允许激活（已激活/已封禁/已删除）
+	// - 404: 用户不存在
+	ActivateUser(context.Context, *connect.Request[admin.ActivateUserRequest]) (*connect.Response[admin.ApiResponse], error)
+	// BanUser - 封禁用户
+	//
+	// 功能: 封禁活跃用户，立即踢下线
+	//
+	// 业务逻辑:
+	// 1. 用户状态变为 BANNED
+	// 2. 撤销用户所有 token（立即踢下线）
+	// 3. 暂停用户所有未使用的邀请码（解封时恢复）
+	//
+	// 参数要求:
+	// - user_id: 必填
+	// - reason: 必填（封禁原因，用于审计和用户申诉）
+	//
+	// 前置条件:
+	// - 用户状态为 ACTIVE
+	//
+	// 错误码:
+	// - 400: 状态不允许封禁（非 ACTIVE 状态）
+	// - 404: 用户不存在
+	BanUser(context.Context, *connect.Request[admin.BanUserRequest]) (*connect.Response[admin.ApiResponse], error)
+	// UnbanUser - 解封用户
+	//
+	// 功能: 解除用户封禁，恢复正常使用
+	//
+	// 业务逻辑:
+	// 1. 用户状态恢复为 ACTIVE
+	// 2. 恢复因封禁而暂停的邀请码
+	// 3. 用户原有权益（额度配置等）保留
+	//
+	// 参数要求:
+	// - user_id: 必填
+	// - reason: 必填（解封原因）
+	//
+	// 前置条件:
+	// - 用户状态为 BANNED
+	//
+	// 错误码:
+	// - 400: 用户非封禁状态
+	// - 404: 用户不存在
+	UnbanUser(context.Context, *connect.Request[admin.UnbanUserRequest]) (*connect.Response[admin.ApiResponse], error)
+	// DeleteUser - 删除用户（软删除）
+	//
+	// 功能: 删除用户，释放账号标识
+	//
+	// ⚠️ 警告: 此操作不可逆！
+	//
+	// 业务逻辑:
+	// 1. 用户状态变为 DELETED
+	// 2. 清空手机号、openid、unionid（释放标识，允许重新注册）
+	// 3. 作废所有未使用的邀请码
+	// 4. 撤销所有 token（立即踢下线）
+	// 5. 记录注销日志（用于审计）
+	//
+	// 参数要求:
+	// - user_id: 必填
+	// - reason: 必填（删除原因，用于审计）
+	//
+	// 错误码:
+	// - 400: 用户已被删除
+	// - 404: 用户不存在
+	DeleteUser(context.Context, *connect.Request[admin.DeleteUserRequest]) (*connect.Response[admin.ApiResponse], error)
+	// UpdateUserProfile - 修改用户资料
+	//
+	// 功能: 修改用户的身份类型、机构名等资料
+	//
+	// 可修改字段:
+	// - identity_type: 身份类型（individual/organization）
+	// - org_name: 机构名称
+	//
+	// 参数要求:
+	// - user_id: 必填
+	// - reason: 必填
+	// - 至少提供一个要修改的字段
+	//
+	// 错误码:
+	// - 404: 用户不存在
+	UpdateUserProfile(context.Context, *connect.Request[admin.UpdateProfileRequest]) (*connect.Response[admin.ApiResponse], error)
+	// SetUserQuota - 设置用户额度
+	//
+	// 功能: 设置用户的每日使用限额或不限额状态
+	//
+	// 使用场景:
+	// 1. 设置自定义限额: is_unlimited=false, daily_limit=100
+	// 2. 设置不限额: is_unlimited=true
+	// 3. 恢复默认限额: is_unlimited=false, 不传 daily_limit
+	// 4. 关闭不限额: is_unlimited=false（恢复默认 50/天）
+	//
+	// 参数要求:
+	// - user_id: 必填
+	// - reason: 必填
+	//
+	// 业务规则:
+	// - 限额调整立即生效
+	// - 若将限额调低到 < 今日已用，用户立即被拦截到次日
+	//
+	// 错误码:
+	// - 404: 用户不存在
+	SetUserQuota(context.Context, *connect.Request[admin.SetQuotaRequest]) (*connect.Response[admin.ApiResponse], error)
+}
+
+// NewAdminUserServiceHandler builds an HTTP handler from the service implementation. It returns the
+// path on which to mount the handler and the handler itself.
+//
+// By default, handlers support the Connect, gRPC, and gRPC-Web protocols with the binary Protobuf
+// and JSON codecs. They also support gzip compression.
+func NewAdminUserServiceHandler(svc AdminUserServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
+	adminUserServiceMethods := admin.File_admin_admin_proto.Services().ByName("AdminUserService").Methods()
+	adminUserServiceGetUsersHandler := connect.NewUnaryHandler(
+		AdminUserServiceGetUsersProcedure,
+		svc.GetUsers,
+		connect.WithSchema(adminUserServiceMethods.ByName("GetUsers")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminUserServiceGetUserDetailHandler := connect.NewUnaryHandler(
+		AdminUserServiceGetUserDetailProcedure,
+		svc.GetUserDetail,
+		connect.WithSchema(adminUserServiceMethods.ByName("GetUserDetail")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminUserServiceGetUserOperationsHandler := connect.NewUnaryHandler(
+		AdminUserServiceGetUserOperationsProcedure,
+		svc.GetUserOperations,
+		connect.WithSchema(adminUserServiceMethods.ByName("GetUserOperations")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminUserServiceActivateUserHandler := connect.NewUnaryHandler(
+		AdminUserServiceActivateUserProcedure,
+		svc.ActivateUser,
+		connect.WithSchema(adminUserServiceMethods.ByName("ActivateUser")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminUserServiceBanUserHandler := connect.NewUnaryHandler(
+		AdminUserServiceBanUserProcedure,
+		svc.BanUser,
+		connect.WithSchema(adminUserServiceMethods.ByName("BanUser")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminUserServiceUnbanUserHandler := connect.NewUnaryHandler(
+		AdminUserServiceUnbanUserProcedure,
+		svc.UnbanUser,
+		connect.WithSchema(adminUserServiceMethods.ByName("UnbanUser")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminUserServiceDeleteUserHandler := connect.NewUnaryHandler(
+		AdminUserServiceDeleteUserProcedure,
+		svc.DeleteUser,
+		connect.WithSchema(adminUserServiceMethods.ByName("DeleteUser")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminUserServiceUpdateUserProfileHandler := connect.NewUnaryHandler(
+		AdminUserServiceUpdateUserProfileProcedure,
+		svc.UpdateUserProfile,
+		connect.WithSchema(adminUserServiceMethods.ByName("UpdateUserProfile")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminUserServiceSetUserQuotaHandler := connect.NewUnaryHandler(
+		AdminUserServiceSetUserQuotaProcedure,
+		svc.SetUserQuota,
+		connect.WithSchema(adminUserServiceMethods.ByName("SetUserQuota")),
+		connect.WithHandlerOptions(opts...),
+	)
+	return "/admin.AdminUserService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case AdminUserServiceGetUsersProcedure:
+			adminUserServiceGetUsersHandler.ServeHTTP(w, r)
+		case AdminUserServiceGetUserDetailProcedure:
+			adminUserServiceGetUserDetailHandler.ServeHTTP(w, r)
+		case AdminUserServiceGetUserOperationsProcedure:
+			adminUserServiceGetUserOperationsHandler.ServeHTTP(w, r)
+		case AdminUserServiceActivateUserProcedure:
+			adminUserServiceActivateUserHandler.ServeHTTP(w, r)
+		case AdminUserServiceBanUserProcedure:
+			adminUserServiceBanUserHandler.ServeHTTP(w, r)
+		case AdminUserServiceUnbanUserProcedure:
+			adminUserServiceUnbanUserHandler.ServeHTTP(w, r)
+		case AdminUserServiceDeleteUserProcedure:
+			adminUserServiceDeleteUserHandler.ServeHTTP(w, r)
+		case AdminUserServiceUpdateUserProfileProcedure:
+			adminUserServiceUpdateUserProfileHandler.ServeHTTP(w, r)
+		case AdminUserServiceSetUserQuotaProcedure:
+			adminUserServiceSetUserQuotaHandler.ServeHTTP(w, r)
+		default:
+			http.NotFound(w, r)
+		}
+	})
+}
+
+// UnimplementedAdminUserServiceHandler returns CodeUnimplemented from all methods.
+type UnimplementedAdminUserServiceHandler struct{}
+
+func (UnimplementedAdminUserServiceHandler) GetUsers(context.Context, *connect.Request[admin.UserQuery]) (*connect.Response[admin.UserListResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("admin.AdminUserService.GetUsers is not implemented"))
+}
+
+func (UnimplementedAdminUserServiceHandler) GetUserDetail(context.Context, *connect.Request[admin.UserIdRequest]) (*connect.Response[admin.UserDetailResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("admin.AdminUserService.GetUserDetail is not implemented"))
+}
+
+func (UnimplementedAdminUserServiceHandler) GetUserOperations(context.Context, *connect.Request[admin.UserOperationsQuery]) (*connect.Response[admin.UserOperationsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("admin.AdminUserService.GetUserOperations is not implemented"))
+}
+
+func (UnimplementedAdminUserServiceHandler) ActivateUser(context.Context, *connect.Request[admin.ActivateUserRequest]) (*connect.Response[admin.ApiResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("admin.AdminUserService.ActivateUser is not implemented"))
+}
+
+func (UnimplementedAdminUserServiceHandler) BanUser(context.Context, *connect.Request[admin.BanUserRequest]) (*connect.Response[admin.ApiResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("admin.AdminUserService.BanUser is not implemented"))
+}
+
+func (UnimplementedAdminUserServiceHandler) UnbanUser(context.Context, *connect.Request[admin.UnbanUserRequest]) (*connect.Response[admin.ApiResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("admin.AdminUserService.UnbanUser is not implemented"))
+}
+
+func (UnimplementedAdminUserServiceHandler) DeleteUser(context.Context, *connect.Request[admin.DeleteUserRequest]) (*connect.Response[admin.ApiResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("admin.AdminUserService.DeleteUser is not implemented"))
+}
+
+func (UnimplementedAdminUserServiceHandler) UpdateUserProfile(context.Context, *connect.Request[admin.UpdateProfileRequest]) (*connect.Response[admin.ApiResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("admin.AdminUserService.UpdateUserProfile is not implemented"))
+}
+
+func (UnimplementedAdminUserServiceHandler) SetUserQuota(context.Context, *connect.Request[admin.SetQuotaRequest]) (*connect.Response[admin.ApiResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("admin.AdminUserService.SetUserQuota is not implemented"))
+}
+
+// AdminInviteServiceClient is a client for the admin.AdminInviteService service.
+type AdminInviteServiceClient interface {
+	// GetInviteCodes - 获取邀请码列表
+	//
+	// 功能: 分页查询邀请码列表，支持多维度筛选
+	//
+	// 筛选条件:
+	// - code: 精确匹配邀请码
+	// - batch_id: 批次号（同一批生成的邀请码共享）
+	// - type: 类型（normal/unlimited）
+	// - status: 状态（unused/used/revoked/suspended）
+	// - inviter_kind: 生成者类型（user/admin）
+	// - 生成者/使用者 ID
+	// - 时间范围
+	//
+	// 返回: 邀请码列表（包含完整信息和关联用户信息）
+	GetInviteCodes(context.Context, *connect.Request[admin.InviteCodeQuery]) (*connect.Response[admin.InviteCodeListResponse], error)
+	// BatchQueryCodes - 批量查询邀请码信息
+	//
+	// 功能: 根据邀请码字符串批量查询详细信息
+	//
+	// 使用场景:
+	// - 批量导入邀请码时检查状态
+	// - 批量查看邀请码使用情况
+	//
+	// 参数要求:
+	// - codes: 邀请码字符串列表，最多 100 个
+	//
+	// 返回:
+	// - found: 找到的邀请码列表
+	// - not_found: 未找到的邀请码列表
+	BatchQueryCodes(context.Context, *connect.Request[admin.BatchQueryCodesRequest]) (*connect.Response[admin.BatchQueryCodesResponse], error)
+	// GetInviteChain - 获取邀请链
+	//
+	// 功能: 查看用户的邀请关系链
+	//
+	// 返回内容:
+	// - user: 当前用户信息
+	// - invited_by: 邀请当前用户的人（上级）
+	// - invited_users: 当前用户邀请的人列表（下级）
+	//
+	// 用途:
+	// - 追溯邀请来源
+	// - 查看邀请裂变效果
+	//
+	// 错误码:
+	// - 404: 用户不存在
+	GetInviteChain(context.Context, *connect.Request[admin.UserIdRequest]) (*connect.Response[admin.InviteChainResponse], error)
+	// GenerateCodes - 生成邀请码（管理员生成）
+	//
+	// 功能: 批量生成管理员邀请码
+	//
+	// 参数要求:
+	// - type: 必填，"normal" 或 "unlimited"
+	// - count: 必填，1-100
+	// - note: 必填，备注说明（同一批次共享）
+	//
+	// 返回:
+	// - batch_id: 批次号（用于追踪和导出）
+	// - codes: 生成的邀请码列表
+	//
+	// 业务规则:
+	// - 管理员生成的邀请码标记 inviter_kind=admin
+	// - 使用不限额邀请码激活的用户自动获得不限额权益
+	GenerateCodes(context.Context, *connect.Request[admin.GenerateCodesRequest]) (*connect.Response[admin.GenerateCodesResponse], error)
+	// RegenerateCodes - 重新生成邀请码（换码）
+	//
+	// 功能: 作废指定邀请码并生成新码
+	//
+	// 使用场景:
+	// - 用户邀请码泄露，需要作废旧码换新码
+	// - 邀请码长期未使用，需要更换
+	//
+	// 业务规则:
+	// - 仅对"未使用"状态的邀请码允许换码
+	// - 换码 = 作废旧码 + 生成新码
+	// - 新码继承原码的 type、inviter 等属性
+	// - 不增加邀请名额
+	//
+	// 参数要求:
+	// - codes: 要换的邀请码列表
+	// - reason: 必填
+	//
+	// 返回:
+	// - revoked: 被作废的邀请码列表
+	// - generated: 新生成的邀请码列表
+	//
+	// 注意: 如果某个邀请码不存在或状态不允许，会跳过并继续处理其他邀请码
+	RegenerateCodes(context.Context, *connect.Request[admin.RegenerateCodesRequest]) (*connect.Response[admin.RegenerateCodesResponse], error)
+	// RevokeCode - 作废邀请码
+	//
+	// 功能: 作废指定的邀请码
+	//
+	// 参数要求:
+	// - code: 必填，邀请码字符串
+	// - reason: 必填
+	//
+	// 前置条件:
+	// - 邀请码状态为 unused 或 suspended
+	//
+	// 错误码:
+	// - 400: 已使用的邀请码不能作废 / 邀请码已被作废
+	// - 404: 邀请码不存在
+	RevokeCode(context.Context, *connect.Request[admin.RevokeCodeRequest]) (*connect.Response[admin.ApiResponse], error)
+}
+
+// NewAdminInviteServiceClient constructs a client for the admin.AdminInviteService service. By
+// default, it uses the Connect protocol with the binary Protobuf Codec, asks for gzipped responses,
+// and sends uncompressed requests. To use the gRPC or gRPC-Web protocols, supply the
+// connect.WithGRPC() or connect.WithGRPCWeb() options.
+//
+// The URL supplied here should be the base URL for the Connect or gRPC server (for example,
+// http://api.acme.com or https://acme.com/grpc).
+func NewAdminInviteServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...connect.ClientOption) AdminInviteServiceClient {
+	baseURL = strings.TrimRight(baseURL, "/")
+	adminInviteServiceMethods := admin.File_admin_admin_proto.Services().ByName("AdminInviteService").Methods()
+	return &adminInviteServiceClient{
+		getInviteCodes: connect.NewClient[admin.InviteCodeQuery, admin.InviteCodeListResponse](
+			httpClient,
+			baseURL+AdminInviteServiceGetInviteCodesProcedure,
+			connect.WithSchema(adminInviteServiceMethods.ByName("GetInviteCodes")),
+			connect.WithClientOptions(opts...),
+		),
+		batchQueryCodes: connect.NewClient[admin.BatchQueryCodesRequest, admin.BatchQueryCodesResponse](
+			httpClient,
+			baseURL+AdminInviteServiceBatchQueryCodesProcedure,
+			connect.WithSchema(adminInviteServiceMethods.ByName("BatchQueryCodes")),
+			connect.WithClientOptions(opts...),
+		),
+		getInviteChain: connect.NewClient[admin.UserIdRequest, admin.InviteChainResponse](
+			httpClient,
+			baseURL+AdminInviteServiceGetInviteChainProcedure,
+			connect.WithSchema(adminInviteServiceMethods.ByName("GetInviteChain")),
+			connect.WithClientOptions(opts...),
+		),
+		generateCodes: connect.NewClient[admin.GenerateCodesRequest, admin.GenerateCodesResponse](
+			httpClient,
+			baseURL+AdminInviteServiceGenerateCodesProcedure,
+			connect.WithSchema(adminInviteServiceMethods.ByName("GenerateCodes")),
+			connect.WithClientOptions(opts...),
+		),
+		regenerateCodes: connect.NewClient[admin.RegenerateCodesRequest, admin.RegenerateCodesResponse](
+			httpClient,
+			baseURL+AdminInviteServiceRegenerateCodesProcedure,
+			connect.WithSchema(adminInviteServiceMethods.ByName("RegenerateCodes")),
+			connect.WithClientOptions(opts...),
+		),
+		revokeCode: connect.NewClient[admin.RevokeCodeRequest, admin.ApiResponse](
+			httpClient,
+			baseURL+AdminInviteServiceRevokeCodeProcedure,
+			connect.WithSchema(adminInviteServiceMethods.ByName("RevokeCode")),
+			connect.WithClientOptions(opts...),
+		),
+	}
+}
+
+// adminInviteServiceClient implements AdminInviteServiceClient.
+type adminInviteServiceClient struct {
+	getInviteCodes  *connect.Client[admin.InviteCodeQuery, admin.InviteCodeListResponse]
+	batchQueryCodes *connect.Client[admin.BatchQueryCodesRequest, admin.BatchQueryCodesResponse]
+	getInviteChain  *connect.Client[admin.UserIdRequest, admin.InviteChainResponse]
+	generateCodes   *connect.Client[admin.GenerateCodesRequest, admin.GenerateCodesResponse]
+	regenerateCodes *connect.Client[admin.RegenerateCodesRequest, admin.RegenerateCodesResponse]
+	revokeCode      *connect.Client[admin.RevokeCodeRequest, admin.ApiResponse]
+}
+
+// GetInviteCodes calls admin.AdminInviteService.GetInviteCodes.
+func (c *adminInviteServiceClient) GetInviteCodes(ctx context.Context, req *connect.Request[admin.InviteCodeQuery]) (*connect.Response[admin.InviteCodeListResponse], error) {
+	return c.getInviteCodes.CallUnary(ctx, req)
+}
+
+// BatchQueryCodes calls admin.AdminInviteService.BatchQueryCodes.
+func (c *adminInviteServiceClient) BatchQueryCodes(ctx context.Context, req *connect.Request[admin.BatchQueryCodesRequest]) (*connect.Response[admin.BatchQueryCodesResponse], error) {
+	return c.batchQueryCodes.CallUnary(ctx, req)
+}
+
+// GetInviteChain calls admin.AdminInviteService.GetInviteChain.
+func (c *adminInviteServiceClient) GetInviteChain(ctx context.Context, req *connect.Request[admin.UserIdRequest]) (*connect.Response[admin.InviteChainResponse], error) {
+	return c.getInviteChain.CallUnary(ctx, req)
+}
+
+// GenerateCodes calls admin.AdminInviteService.GenerateCodes.
+func (c *adminInviteServiceClient) GenerateCodes(ctx context.Context, req *connect.Request[admin.GenerateCodesRequest]) (*connect.Response[admin.GenerateCodesResponse], error) {
+	return c.generateCodes.CallUnary(ctx, req)
+}
+
+// RegenerateCodes calls admin.AdminInviteService.RegenerateCodes.
+func (c *adminInviteServiceClient) RegenerateCodes(ctx context.Context, req *connect.Request[admin.RegenerateCodesRequest]) (*connect.Response[admin.RegenerateCodesResponse], error) {
+	return c.regenerateCodes.CallUnary(ctx, req)
+}
+
+// RevokeCode calls admin.AdminInviteService.RevokeCode.
+func (c *adminInviteServiceClient) RevokeCode(ctx context.Context, req *connect.Request[admin.RevokeCodeRequest]) (*connect.Response[admin.ApiResponse], error) {
+	return c.revokeCode.CallUnary(ctx, req)
+}
+
+// AdminInviteServiceHandler is an implementation of the admin.AdminInviteService service.
+type AdminInviteServiceHandler interface {
+	// GetInviteCodes - 获取邀请码列表
+	//
+	// 功能: 分页查询邀请码列表，支持多维度筛选
+	//
+	// 筛选条件:
+	// - code: 精确匹配邀请码
+	// - batch_id: 批次号（同一批生成的邀请码共享）
+	// - type: 类型（normal/unlimited）
+	// - status: 状态（unused/used/revoked/suspended）
+	// - inviter_kind: 生成者类型（user/admin）
+	// - 生成者/使用者 ID
+	// - 时间范围
+	//
+	// 返回: 邀请码列表（包含完整信息和关联用户信息）
+	GetInviteCodes(context.Context, *connect.Request[admin.InviteCodeQuery]) (*connect.Response[admin.InviteCodeListResponse], error)
+	// BatchQueryCodes - 批量查询邀请码信息
+	//
+	// 功能: 根据邀请码字符串批量查询详细信息
+	//
+	// 使用场景:
+	// - 批量导入邀请码时检查状态
+	// - 批量查看邀请码使用情况
+	//
+	// 参数要求:
+	// - codes: 邀请码字符串列表，最多 100 个
+	//
+	// 返回:
+	// - found: 找到的邀请码列表
+	// - not_found: 未找到的邀请码列表
+	BatchQueryCodes(context.Context, *connect.Request[admin.BatchQueryCodesRequest]) (*connect.Response[admin.BatchQueryCodesResponse], error)
+	// GetInviteChain - 获取邀请链
+	//
+	// 功能: 查看用户的邀请关系链
+	//
+	// 返回内容:
+	// - user: 当前用户信息
+	// - invited_by: 邀请当前用户的人（上级）
+	// - invited_users: 当前用户邀请的人列表（下级）
+	//
+	// 用途:
+	// - 追溯邀请来源
+	// - 查看邀请裂变效果
+	//
+	// 错误码:
+	// - 404: 用户不存在
+	GetInviteChain(context.Context, *connect.Request[admin.UserIdRequest]) (*connect.Response[admin.InviteChainResponse], error)
+	// GenerateCodes - 生成邀请码（管理员生成）
+	//
+	// 功能: 批量生成管理员邀请码
+	//
+	// 参数要求:
+	// - type: 必填，"normal" 或 "unlimited"
+	// - count: 必填，1-100
+	// - note: 必填，备注说明（同一批次共享）
+	//
+	// 返回:
+	// - batch_id: 批次号（用于追踪和导出）
+	// - codes: 生成的邀请码列表
+	//
+	// 业务规则:
+	// - 管理员生成的邀请码标记 inviter_kind=admin
+	// - 使用不限额邀请码激活的用户自动获得不限额权益
+	GenerateCodes(context.Context, *connect.Request[admin.GenerateCodesRequest]) (*connect.Response[admin.GenerateCodesResponse], error)
+	// RegenerateCodes - 重新生成邀请码（换码）
+	//
+	// 功能: 作废指定邀请码并生成新码
+	//
+	// 使用场景:
+	// - 用户邀请码泄露，需要作废旧码换新码
+	// - 邀请码长期未使用，需要更换
+	//
+	// 业务规则:
+	// - 仅对"未使用"状态的邀请码允许换码
+	// - 换码 = 作废旧码 + 生成新码
+	// - 新码继承原码的 type、inviter 等属性
+	// - 不增加邀请名额
+	//
+	// 参数要求:
+	// - codes: 要换的邀请码列表
+	// - reason: 必填
+	//
+	// 返回:
+	// - revoked: 被作废的邀请码列表
+	// - generated: 新生成的邀请码列表
+	//
+	// 注意: 如果某个邀请码不存在或状态不允许，会跳过并继续处理其他邀请码
+	RegenerateCodes(context.Context, *connect.Request[admin.RegenerateCodesRequest]) (*connect.Response[admin.RegenerateCodesResponse], error)
+	// RevokeCode - 作废邀请码
+	//
+	// 功能: 作废指定的邀请码
+	//
+	// 参数要求:
+	// - code: 必填，邀请码字符串
+	// - reason: 必填
+	//
+	// 前置条件:
+	// - 邀请码状态为 unused 或 suspended
+	//
+	// 错误码:
+	// - 400: 已使用的邀请码不能作废 / 邀请码已被作废
+	// - 404: 邀请码不存在
+	RevokeCode(context.Context, *connect.Request[admin.RevokeCodeRequest]) (*connect.Response[admin.ApiResponse], error)
+}
+
+// NewAdminInviteServiceHandler builds an HTTP handler from the service implementation. It returns
+// the path on which to mount the handler and the handler itself.
+//
+// By default, handlers support the Connect, gRPC, and gRPC-Web protocols with the binary Protobuf
+// and JSON codecs. They also support gzip compression.
+func NewAdminInviteServiceHandler(svc AdminInviteServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
+	adminInviteServiceMethods := admin.File_admin_admin_proto.Services().ByName("AdminInviteService").Methods()
+	adminInviteServiceGetInviteCodesHandler := connect.NewUnaryHandler(
+		AdminInviteServiceGetInviteCodesProcedure,
+		svc.GetInviteCodes,
+		connect.WithSchema(adminInviteServiceMethods.ByName("GetInviteCodes")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminInviteServiceBatchQueryCodesHandler := connect.NewUnaryHandler(
+		AdminInviteServiceBatchQueryCodesProcedure,
+		svc.BatchQueryCodes,
+		connect.WithSchema(adminInviteServiceMethods.ByName("BatchQueryCodes")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminInviteServiceGetInviteChainHandler := connect.NewUnaryHandler(
+		AdminInviteServiceGetInviteChainProcedure,
+		svc.GetInviteChain,
+		connect.WithSchema(adminInviteServiceMethods.ByName("GetInviteChain")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminInviteServiceGenerateCodesHandler := connect.NewUnaryHandler(
+		AdminInviteServiceGenerateCodesProcedure,
+		svc.GenerateCodes,
+		connect.WithSchema(adminInviteServiceMethods.ByName("GenerateCodes")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminInviteServiceRegenerateCodesHandler := connect.NewUnaryHandler(
+		AdminInviteServiceRegenerateCodesProcedure,
+		svc.RegenerateCodes,
+		connect.WithSchema(adminInviteServiceMethods.ByName("RegenerateCodes")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminInviteServiceRevokeCodeHandler := connect.NewUnaryHandler(
+		AdminInviteServiceRevokeCodeProcedure,
+		svc.RevokeCode,
+		connect.WithSchema(adminInviteServiceMethods.ByName("RevokeCode")),
+		connect.WithHandlerOptions(opts...),
+	)
+	return "/admin.AdminInviteService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case AdminInviteServiceGetInviteCodesProcedure:
+			adminInviteServiceGetInviteCodesHandler.ServeHTTP(w, r)
+		case AdminInviteServiceBatchQueryCodesProcedure:
+			adminInviteServiceBatchQueryCodesHandler.ServeHTTP(w, r)
+		case AdminInviteServiceGetInviteChainProcedure:
+			adminInviteServiceGetInviteChainHandler.ServeHTTP(w, r)
+		case AdminInviteServiceGenerateCodesProcedure:
+			adminInviteServiceGenerateCodesHandler.ServeHTTP(w, r)
+		case AdminInviteServiceRegenerateCodesProcedure:
+			adminInviteServiceRegenerateCodesHandler.ServeHTTP(w, r)
+		case AdminInviteServiceRevokeCodeProcedure:
+			adminInviteServiceRevokeCodeHandler.ServeHTTP(w, r)
+		default:
+			http.NotFound(w, r)
+		}
+	})
+}
+
+// UnimplementedAdminInviteServiceHandler returns CodeUnimplemented from all methods.
+type UnimplementedAdminInviteServiceHandler struct{}
+
+func (UnimplementedAdminInviteServiceHandler) GetInviteCodes(context.Context, *connect.Request[admin.InviteCodeQuery]) (*connect.Response[admin.InviteCodeListResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("admin.AdminInviteService.GetInviteCodes is not implemented"))
+}
+
+func (UnimplementedAdminInviteServiceHandler) BatchQueryCodes(context.Context, *connect.Request[admin.BatchQueryCodesRequest]) (*connect.Response[admin.BatchQueryCodesResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("admin.AdminInviteService.BatchQueryCodes is not implemented"))
+}
+
+func (UnimplementedAdminInviteServiceHandler) GetInviteChain(context.Context, *connect.Request[admin.UserIdRequest]) (*connect.Response[admin.InviteChainResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("admin.AdminInviteService.GetInviteChain is not implemented"))
+}
+
+func (UnimplementedAdminInviteServiceHandler) GenerateCodes(context.Context, *connect.Request[admin.GenerateCodesRequest]) (*connect.Response[admin.GenerateCodesResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("admin.AdminInviteService.GenerateCodes is not implemented"))
+}
+
+func (UnimplementedAdminInviteServiceHandler) RegenerateCodes(context.Context, *connect.Request[admin.RegenerateCodesRequest]) (*connect.Response[admin.RegenerateCodesResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("admin.AdminInviteService.RegenerateCodes is not implemented"))
+}
+
+func (UnimplementedAdminInviteServiceHandler) RevokeCode(context.Context, *connect.Request[admin.RevokeCodeRequest]) (*connect.Response[admin.ApiResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("admin.AdminInviteService.RevokeCode is not implemented"))
 }

@@ -589,11 +589,3306 @@ func (x *RefreshTokenResponse) GetToken() string {
 	return ""
 }
 
+// UserIdRequest - 用户 ID 请求
+//
+// 用于只需要 user_id 参数的接口
+type UserIdRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 用户 ID（UUID 格式）
+	// 示例: "550e8400-e29b-41d4-a716-446655440000"
+	UserId        string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UserIdRequest) Reset() {
+	*x = UserIdRequest{}
+	mi := &file_admin_admin_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UserIdRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserIdRequest) ProtoMessage() {}
+
+func (x *UserIdRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_admin_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserIdRequest.ProtoReflect.Descriptor instead.
+func (*UserIdRequest) Descriptor() ([]byte, []int) {
+	return file_admin_admin_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *UserIdRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+// UserQuery - 用户列表查询请求
+//
+// 支持多维度筛选、排序和分页
+// 所有筛选条件为可选，不传则不筛选
+type UserQuery struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 关键词搜索
+	// 搜索范围: 手机号、昵称、机构名、user_id
+	// 匹配方式: 包含（LIKE %keyword%）
+	Keyword string `protobuf:"bytes,1,opt,name=keyword,proto3" json:"keyword,omitempty"`
+	// 通过使用的邀请码搜索
+	// 精确匹配，找到使用该邀请码激活的用户
+	InviteCode string `protobuf:"bytes,2,opt,name=invite_code,json=inviteCode,proto3" json:"invite_code,omitempty"`
+	// 通过邀请人手机号搜索
+	// 找到被该手机号用户邀请的所有用户
+	InviterPhone string `protobuf:"bytes,3,opt,name=inviter_phone,json=inviterPhone,proto3" json:"inviter_phone,omitempty"`
+	// 通过邀请人用户 ID 搜索
+	// 找到被该用户邀请的所有用户
+	InviterUserId string `protobuf:"bytes,4,opt,name=inviter_user_id,json=inviterUserId,proto3" json:"inviter_user_id,omitempty"`
+	// 状态筛选（支持多选）
+	// 可选值:
+	// - "unapplied": 未申请
+	// - "waiting": 排队中
+	// - "active": 已激活
+	// - "banned": 已封禁
+	// - "deleted": 已删除
+	// 示例: ["active", "banned"] 筛选激活和封禁用户
+	Status []string `protobuf:"bytes,5,rep,name=status,proto3" json:"status,omitempty"`
+	// 身份类型筛选
+	// 可选值:
+	// - "individual": 个人用户
+	// - "organization": 机构用户
+	IdentityType string `protobuf:"bytes,6,opt,name=identity_type,json=identityType,proto3" json:"identity_type,omitempty"`
+	// 额度类型筛选
+	// 可选值:
+	// - "default": 默认额度（50/天）
+	// - "custom": 自定义额度（管理员设置）
+	// - "unlimited": 不限额
+	QuotaType string `protobuf:"bytes,7,opt,name=quota_type,json=quotaType,proto3" json:"quota_type,omitempty"`
+	// 激活方式筛选
+	// 可选值:
+	// - "auto_release": 定时自动放量
+	// - "invite": 邀请码激活
+	// - "admin": 后台手动激活
+	ActivatedBy string `protobuf:"bytes,8,opt,name=activated_by,json=activatedBy,proto3" json:"activated_by,omitempty"`
+	// 注册时间范围（用户创建时间）
+	CreatedAt *TimeRange `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	// 激活时间范围（状态变为 ACTIVE 的时间）
+	ActivatedAt *TimeRange `protobuf:"bytes,10,opt,name=activated_at,json=activatedAt,proto3" json:"activated_at,omitempty"`
+	// 排序字段
+	// 可选值:
+	// - "created_at": 注册时间（默认）
+	// - "activated_at": 激活时间
+	// - "used_today": 今日用量
+	SortBy string `protobuf:"bytes,11,opt,name=sort_by,json=sortBy,proto3" json:"sort_by,omitempty"`
+	// 排序方向
+	// 可选值:
+	// - "desc": 降序（默认，最新/最多在前）
+	// - "asc": 升序
+	SortOrder string `protobuf:"bytes,12,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
+	// 分页参数
+	Pagination    *Pagination `protobuf:"bytes,13,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UserQuery) Reset() {
+	*x = UserQuery{}
+	mi := &file_admin_admin_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UserQuery) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserQuery) ProtoMessage() {}
+
+func (x *UserQuery) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_admin_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserQuery.ProtoReflect.Descriptor instead.
+func (*UserQuery) Descriptor() ([]byte, []int) {
+	return file_admin_admin_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *UserQuery) GetKeyword() string {
+	if x != nil {
+		return x.Keyword
+	}
+	return ""
+}
+
+func (x *UserQuery) GetInviteCode() string {
+	if x != nil {
+		return x.InviteCode
+	}
+	return ""
+}
+
+func (x *UserQuery) GetInviterPhone() string {
+	if x != nil {
+		return x.InviterPhone
+	}
+	return ""
+}
+
+func (x *UserQuery) GetInviterUserId() string {
+	if x != nil {
+		return x.InviterUserId
+	}
+	return ""
+}
+
+func (x *UserQuery) GetStatus() []string {
+	if x != nil {
+		return x.Status
+	}
+	return nil
+}
+
+func (x *UserQuery) GetIdentityType() string {
+	if x != nil {
+		return x.IdentityType
+	}
+	return ""
+}
+
+func (x *UserQuery) GetQuotaType() string {
+	if x != nil {
+		return x.QuotaType
+	}
+	return ""
+}
+
+func (x *UserQuery) GetActivatedBy() string {
+	if x != nil {
+		return x.ActivatedBy
+	}
+	return ""
+}
+
+func (x *UserQuery) GetCreatedAt() *TimeRange {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *UserQuery) GetActivatedAt() *TimeRange {
+	if x != nil {
+		return x.ActivatedAt
+	}
+	return nil
+}
+
+func (x *UserQuery) GetSortBy() string {
+	if x != nil {
+		return x.SortBy
+	}
+	return ""
+}
+
+func (x *UserQuery) GetSortOrder() string {
+	if x != nil {
+		return x.SortOrder
+	}
+	return ""
+}
+
+func (x *UserQuery) GetPagination() *Pagination {
+	if x != nil {
+		return x.Pagination
+	}
+	return nil
+}
+
+// ActivateUserRequest - 激活用户请求
+type ActivateUserRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 用户 ID（必填）
+	UserId string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	// 激活原因（必填）
+	// 示例: "VIP 客户优先激活"、"内部测试账号"
+	Reason        string `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ActivateUserRequest) Reset() {
+	*x = ActivateUserRequest{}
+	mi := &file_admin_admin_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ActivateUserRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ActivateUserRequest) ProtoMessage() {}
+
+func (x *ActivateUserRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_admin_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ActivateUserRequest.ProtoReflect.Descriptor instead.
+func (*ActivateUserRequest) Descriptor() ([]byte, []int) {
+	return file_admin_admin_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *ActivateUserRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *ActivateUserRequest) GetReason() string {
+	if x != nil {
+		return x.Reason
+	}
+	return ""
+}
+
+// BanUserRequest - 封禁用户请求
+type BanUserRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 用户 ID（必填）
+	UserId string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	// 封禁原因（必填）
+	// 示例: "违反使用条款"、"异常使用行为"
+	// 注意: 此原因会记录在案，可能用于用户申诉时的参考
+	Reason        string `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *BanUserRequest) Reset() {
+	*x = BanUserRequest{}
+	mi := &file_admin_admin_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BanUserRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BanUserRequest) ProtoMessage() {}
+
+func (x *BanUserRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_admin_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BanUserRequest.ProtoReflect.Descriptor instead.
+func (*BanUserRequest) Descriptor() ([]byte, []int) {
+	return file_admin_admin_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *BanUserRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *BanUserRequest) GetReason() string {
+	if x != nil {
+		return x.Reason
+	}
+	return ""
+}
+
+// UnbanUserRequest - 解封用户请求
+type UnbanUserRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 用户 ID（必填）
+	UserId string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	// 解封原因（必填）
+	// 示例: "用户申诉通过"、"误封"
+	Reason        string `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UnbanUserRequest) Reset() {
+	*x = UnbanUserRequest{}
+	mi := &file_admin_admin_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UnbanUserRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UnbanUserRequest) ProtoMessage() {}
+
+func (x *UnbanUserRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_admin_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UnbanUserRequest.ProtoReflect.Descriptor instead.
+func (*UnbanUserRequest) Descriptor() ([]byte, []int) {
+	return file_admin_admin_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *UnbanUserRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *UnbanUserRequest) GetReason() string {
+	if x != nil {
+		return x.Reason
+	}
+	return ""
+}
+
+// DeleteUserRequest - 删除用户请求
+type DeleteUserRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 用户 ID（必填）
+	UserId string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	// 删除原因（必填）
+	// ⚠️ 此操作不可逆，请务必填写准确的原因
+	// 示例: "用户主动申请注销"、"长期未使用清理"
+	Reason        string `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteUserRequest) Reset() {
+	*x = DeleteUserRequest{}
+	mi := &file_admin_admin_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteUserRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteUserRequest) ProtoMessage() {}
+
+func (x *DeleteUserRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_admin_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteUserRequest.ProtoReflect.Descriptor instead.
+func (*DeleteUserRequest) Descriptor() ([]byte, []int) {
+	return file_admin_admin_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *DeleteUserRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *DeleteUserRequest) GetReason() string {
+	if x != nil {
+		return x.Reason
+	}
+	return ""
+}
+
+// UpdateProfileRequest - 修改用户资料请求
+type UpdateProfileRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 用户 ID（必填）
+	UserId string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	// 身份类型（可选）
+	// 可选值: "individual"（个人）、"organization"（机构）
+	// 不传则不修改
+	IdentityType *string `protobuf:"bytes,2,opt,name=identity_type,json=identityType,proto3,oneof" json:"identity_type,omitempty"`
+	// 机构名称（可选）
+	// 仅当 identity_type 为 "organization" 时有意义
+	// 不传则不修改
+	OrgName *string `protobuf:"bytes,3,opt,name=org_name,json=orgName,proto3,oneof" json:"org_name,omitempty"`
+	// 修改原因（必填）
+	Reason        string `protobuf:"bytes,4,opt,name=reason,proto3" json:"reason,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateProfileRequest) Reset() {
+	*x = UpdateProfileRequest{}
+	mi := &file_admin_admin_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateProfileRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateProfileRequest) ProtoMessage() {}
+
+func (x *UpdateProfileRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_admin_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateProfileRequest.ProtoReflect.Descriptor instead.
+func (*UpdateProfileRequest) Descriptor() ([]byte, []int) {
+	return file_admin_admin_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *UpdateProfileRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *UpdateProfileRequest) GetIdentityType() string {
+	if x != nil && x.IdentityType != nil {
+		return *x.IdentityType
+	}
+	return ""
+}
+
+func (x *UpdateProfileRequest) GetOrgName() string {
+	if x != nil && x.OrgName != nil {
+		return *x.OrgName
+	}
+	return ""
+}
+
+func (x *UpdateProfileRequest) GetReason() string {
+	if x != nil {
+		return x.Reason
+	}
+	return ""
+}
+
+// SetQuotaRequest - 设置用户额度请求
+//
+// 使用场景:
+// 1. 设置自定义限额: is_unlimited=false, daily_limit=100
+// 2. 设置不限额: is_unlimited=true（daily_limit 会被忽略）
+// 3. 恢复默认限额: is_unlimited=false, 不设置 daily_limit
+type SetQuotaRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 用户 ID（必填）
+	UserId string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	// 是否不限额
+	// - true: 用户无使用上限
+	// - false: 使用 daily_limit 或默认限额
+	IsUnlimited bool `protobuf:"varint,2,opt,name=is_unlimited,json=isUnlimited,proto3" json:"is_unlimited,omitempty"`
+	// 每日限额（可选）
+	// - 设置具体值: 用户每日最多使用该次数
+	// - 不设置（使用 optional）: 恢复默认值（50/天）
+	// 注意: 当 is_unlimited=true 时，此字段无效
+	DailyLimit *int32 `protobuf:"varint,3,opt,name=daily_limit,json=dailyLimit,proto3,oneof" json:"daily_limit,omitempty"`
+	// 修改原因（必填）
+	Reason        string `protobuf:"bytes,4,opt,name=reason,proto3" json:"reason,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SetQuotaRequest) Reset() {
+	*x = SetQuotaRequest{}
+	mi := &file_admin_admin_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SetQuotaRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetQuotaRequest) ProtoMessage() {}
+
+func (x *SetQuotaRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_admin_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SetQuotaRequest.ProtoReflect.Descriptor instead.
+func (*SetQuotaRequest) Descriptor() ([]byte, []int) {
+	return file_admin_admin_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *SetQuotaRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *SetQuotaRequest) GetIsUnlimited() bool {
+	if x != nil {
+		return x.IsUnlimited
+	}
+	return false
+}
+
+func (x *SetQuotaRequest) GetDailyLimit() int32 {
+	if x != nil && x.DailyLimit != nil {
+		return *x.DailyLimit
+	}
+	return 0
+}
+
+func (x *SetQuotaRequest) GetReason() string {
+	if x != nil {
+		return x.Reason
+	}
+	return ""
+}
+
+// UserOperationsQuery - 用户操作记录查询请求
+type UserOperationsQuery struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 用户 ID（必填）
+	UserId string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	// 筛选操作类型（可选，支持多选）
+	// 可选值:
+	// - "activate": 激活
+	// - "ban": 封禁
+	// - "unban": 解封
+	// - "delete": 删除
+	// - "set_quota": 设置限额
+	// - "set_unlimited": 设置不限额
+	// - "update_profile": 修改资料
+	// 不传则返回所有操作记录
+	Operations []string `protobuf:"bytes,2,rep,name=operations,proto3" json:"operations,omitempty"`
+	// 分页参数
+	Pagination    *Pagination `protobuf:"bytes,3,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UserOperationsQuery) Reset() {
+	*x = UserOperationsQuery{}
+	mi := &file_admin_admin_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UserOperationsQuery) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserOperationsQuery) ProtoMessage() {}
+
+func (x *UserOperationsQuery) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_admin_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserOperationsQuery.ProtoReflect.Descriptor instead.
+func (*UserOperationsQuery) Descriptor() ([]byte, []int) {
+	return file_admin_admin_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *UserOperationsQuery) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *UserOperationsQuery) GetOperations() []string {
+	if x != nil {
+		return x.Operations
+	}
+	return nil
+}
+
+func (x *UserOperationsQuery) GetPagination() *Pagination {
+	if x != nil {
+		return x.Pagination
+	}
+	return nil
+}
+
+// UserListResponse - 用户列表响应
+type UserListResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 业务状态码（0 表示成功）
+	Code int32 `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
+	// 响应消息
+	Message string `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	// 响应数据（code=0 时有值）
+	Data          *UserListData `protobuf:"bytes,3,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UserListResponse) Reset() {
+	*x = UserListResponse{}
+	mi := &file_admin_admin_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UserListResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserListResponse) ProtoMessage() {}
+
+func (x *UserListResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_admin_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserListResponse.ProtoReflect.Descriptor instead.
+func (*UserListResponse) Descriptor() ([]byte, []int) {
+	return file_admin_admin_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *UserListResponse) GetCode() int32 {
+	if x != nil {
+		return x.Code
+	}
+	return 0
+}
+
+func (x *UserListResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+func (x *UserListResponse) GetData() *UserListData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+// UserListData - 用户列表数据
+type UserListData struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 分页信息
+	PageInfo *PageInfo `protobuf:"bytes,1,opt,name=page_info,json=pageInfo,proto3" json:"page_info,omitempty"`
+	// 用户列表
+	Items         []*UserListItem `protobuf:"bytes,2,rep,name=items,proto3" json:"items,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UserListData) Reset() {
+	*x = UserListData{}
+	mi := &file_admin_admin_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UserListData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserListData) ProtoMessage() {}
+
+func (x *UserListData) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_admin_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserListData.ProtoReflect.Descriptor instead.
+func (*UserListData) Descriptor() ([]byte, []int) {
+	return file_admin_admin_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *UserListData) GetPageInfo() *PageInfo {
+	if x != nil {
+		return x.PageInfo
+	}
+	return nil
+}
+
+func (x *UserListData) GetItems() []*UserListItem {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
+// UserListItem - 用户列表项
+//
+// 包含用户的基本信息和关键状态，用于列表展示
+type UserListItem struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 用户 ID（UUID 格式）
+	UserId string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	// 当前绑定的手机号
+	// 注意: 已删除用户此字段为空
+	Phone string `protobuf:"bytes,2,opt,name=phone,proto3" json:"phone,omitempty"`
+	// 用户昵称
+	Nickname string `protobuf:"bytes,3,opt,name=nickname,proto3" json:"nickname,omitempty"`
+	// 身份类型
+	// 可选值: "individual"（个人）、"organization"（机构）
+	IdentityType string `protobuf:"bytes,4,opt,name=identity_type,json=identityType,proto3" json:"identity_type,omitempty"`
+	// 机构名称（仅机构用户有值）
+	OrgName string `protobuf:"bytes,5,opt,name=org_name,json=orgName,proto3" json:"org_name,omitempty"`
+	// 用户状态
+	// 可选值: "unapplied"、"waiting"、"active"、"banned"、"deleted"
+	Status string `protobuf:"bytes,6,opt,name=status,proto3" json:"status,omitempty"`
+	// 额度信息
+	Quota *UserQuotaInfo `protobuf:"bytes,7,opt,name=quota,proto3" json:"quota,omitempty"`
+	// 邀请码使用统计
+	// 显示用户的邀请码使用情况，如 "已用 1/3"
+	InviteSummary *InviteSummary `protobuf:"bytes,8,opt,name=invite_summary,json=inviteSummary,proto3" json:"invite_summary,omitempty"`
+	// 激活时间（Unix 时间戳，秒）
+	// 未激活用户此字段为 0
+	ActivatedAt int64 `protobuf:"varint,9,opt,name=activated_at,json=activatedAt,proto3" json:"activated_at,omitempty"`
+	// 注册时间（Unix 时间戳，秒）
+	CreatedAt     int64 `protobuf:"varint,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UserListItem) Reset() {
+	*x = UserListItem{}
+	mi := &file_admin_admin_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UserListItem) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserListItem) ProtoMessage() {}
+
+func (x *UserListItem) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_admin_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserListItem.ProtoReflect.Descriptor instead.
+func (*UserListItem) Descriptor() ([]byte, []int) {
+	return file_admin_admin_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *UserListItem) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *UserListItem) GetPhone() string {
+	if x != nil {
+		return x.Phone
+	}
+	return ""
+}
+
+func (x *UserListItem) GetNickname() string {
+	if x != nil {
+		return x.Nickname
+	}
+	return ""
+}
+
+func (x *UserListItem) GetIdentityType() string {
+	if x != nil {
+		return x.IdentityType
+	}
+	return ""
+}
+
+func (x *UserListItem) GetOrgName() string {
+	if x != nil {
+		return x.OrgName
+	}
+	return ""
+}
+
+func (x *UserListItem) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *UserListItem) GetQuota() *UserQuotaInfo {
+	if x != nil {
+		return x.Quota
+	}
+	return nil
+}
+
+func (x *UserListItem) GetInviteSummary() *InviteSummary {
+	if x != nil {
+		return x.InviteSummary
+	}
+	return nil
+}
+
+func (x *UserListItem) GetActivatedAt() int64 {
+	if x != nil {
+		return x.ActivatedAt
+	}
+	return 0
+}
+
+func (x *UserListItem) GetCreatedAt() int64 {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return 0
+}
+
+// UserQuotaInfo - 用户额度信息
+type UserQuotaInfo struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 额度类型
+	// 可选值:
+	// - "default": 默认额度（50/天）
+	// - "custom": 自定义额度
+	// - "unlimited": 不限额
+	Type string `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
+	// 每日限额
+	// 默认 50，不限额用户此字段无意义
+	DailyLimit int32 `protobuf:"varint,2,opt,name=daily_limit,json=dailyLimit,proto3" json:"daily_limit,omitempty"`
+	// 今日已使用次数
+	// 每日北京时间 0 点重置
+	UsedToday int32 `protobuf:"varint,3,opt,name=used_today,json=usedToday,proto3" json:"used_today,omitempty"`
+	// 今日剩余次数
+	// - 正常用户: daily_limit - used_today
+	// - 不限额用户: -1（表示无限）
+	RemainingToday int32 `protobuf:"varint,4,opt,name=remaining_today,json=remainingToday,proto3" json:"remaining_today,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *UserQuotaInfo) Reset() {
+	*x = UserQuotaInfo{}
+	mi := &file_admin_admin_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UserQuotaInfo) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserQuotaInfo) ProtoMessage() {}
+
+func (x *UserQuotaInfo) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_admin_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserQuotaInfo.ProtoReflect.Descriptor instead.
+func (*UserQuotaInfo) Descriptor() ([]byte, []int) {
+	return file_admin_admin_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *UserQuotaInfo) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+func (x *UserQuotaInfo) GetDailyLimit() int32 {
+	if x != nil {
+		return x.DailyLimit
+	}
+	return 0
+}
+
+func (x *UserQuotaInfo) GetUsedToday() int32 {
+	if x != nil {
+		return x.UsedToday
+	}
+	return 0
+}
+
+func (x *UserQuotaInfo) GetRemainingToday() int32 {
+	if x != nil {
+		return x.RemainingToday
+	}
+	return 0
+}
+
+// InviteSummary - 邀请码统计摘要
+//
+// 用于列表展示用户的邀请码使用情况
+type InviteSummary struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 邀请码总数（通常为 3）
+	Total int32 `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"`
+	// 已使用数量
+	Used          int32 `protobuf:"varint,2,opt,name=used,proto3" json:"used,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *InviteSummary) Reset() {
+	*x = InviteSummary{}
+	mi := &file_admin_admin_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *InviteSummary) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*InviteSummary) ProtoMessage() {}
+
+func (x *InviteSummary) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_admin_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use InviteSummary.ProtoReflect.Descriptor instead.
+func (*InviteSummary) Descriptor() ([]byte, []int) {
+	return file_admin_admin_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *InviteSummary) GetTotal() int32 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+func (x *InviteSummary) GetUsed() int32 {
+	if x != nil {
+		return x.Used
+	}
+	return 0
+}
+
+// UserDetailResponse - 用户详情响应
+type UserDetailResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 业务状态码
+	Code int32 `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
+	// 响应消息
+	Message string `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	// 用户详情数据（code=0 时有值）
+	Data          *UserDetailData `protobuf:"bytes,3,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UserDetailResponse) Reset() {
+	*x = UserDetailResponse{}
+	mi := &file_admin_admin_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UserDetailResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserDetailResponse) ProtoMessage() {}
+
+func (x *UserDetailResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_admin_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserDetailResponse.ProtoReflect.Descriptor instead.
+func (*UserDetailResponse) Descriptor() ([]byte, []int) {
+	return file_admin_admin_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *UserDetailResponse) GetCode() int32 {
+	if x != nil {
+		return x.Code
+	}
+	return 0
+}
+
+func (x *UserDetailResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+func (x *UserDetailResponse) GetData() *UserDetailData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+// UserDetailData - 用户详情数据
+//
+// 包含用户的完整信息，用于详情页展示
+type UserDetailData struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 用户 ID（系统内部稳定主键）
+	UserId string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	// 当前绑定手机号（完整，未脱敏）
+	// 已删除用户此字段为空
+	Phone string `protobuf:"bytes,2,opt,name=phone,proto3" json:"phone,omitempty"`
+	// 手机号变更历史
+	// 按时间倒序排列，最新变更在前
+	PhoneHistory []*PhoneChangeRecord `protobuf:"bytes,3,rep,name=phone_history,json=phoneHistory,proto3" json:"phone_history,omitempty"`
+	// 用户昵称
+	Nickname string `protobuf:"bytes,4,opt,name=nickname,proto3" json:"nickname,omitempty"`
+	// 头像 URL
+	AvatarUrl string `protobuf:"bytes,5,opt,name=avatar_url,json=avatarUrl,proto3" json:"avatar_url,omitempty"`
+	// 身份类型: "individual" 或 "organization"
+	IdentityType string `protobuf:"bytes,6,opt,name=identity_type,json=identityType,proto3" json:"identity_type,omitempty"`
+	// 机构名称（仅机构用户）
+	OrgName string `protobuf:"bytes,7,opt,name=org_name,json=orgName,proto3" json:"org_name,omitempty"`
+	// 年客户量（用户填写的业务信息）
+	AnnualClients int32 `protobuf:"varint,8,opt,name=annual_clients,json=annualClients,proto3" json:"annual_clients,omitempty"`
+	// 当前状态
+	// 可选值: "unapplied"、"waiting"、"active"、"banned"、"deleted"
+	Status string `protobuf:"bytes,9,opt,name=status,proto3" json:"status,omitempty"`
+	// 状态最近一次变更时间（Unix 时间戳，秒）
+	StatusUpdatedAt int64 `protobuf:"varint,10,opt,name=status_updated_at,json=statusUpdatedAt,proto3" json:"status_updated_at,omitempty"`
+	// 申请内测时间（UNAPPLIED → WAITING 的时间）
+	AppliedAt int64 `protobuf:"varint,11,opt,name=applied_at,json=appliedAt,proto3" json:"applied_at,omitempty"`
+	// 激活时间（进入 ACTIVE 的时间）
+	ActivatedAt int64 `protobuf:"varint,12,opt,name=activated_at,json=activatedAt,proto3" json:"activated_at,omitempty"`
+	// 激活方式
+	// 可选值:
+	// - "auto_release": 定时自动放量
+	// - "invite": 邀请码激活
+	// - "admin": 后台手动激活
+	ActivatedBy string `protobuf:"bytes,13,opt,name=activated_by,json=activatedBy,proto3" json:"activated_by,omitempty"`
+	// 激活操作的管理员 ID
+	// 仅当 activated_by="admin" 时有值
+	ActivatedByAdminId string `protobuf:"bytes,14,opt,name=activated_by_admin_id,json=activatedByAdminId,proto3" json:"activated_by_admin_id,omitempty"`
+	// 使用的邀请码
+	// 仅当 activated_by="invite" 时有值
+	ActivatedCode string `protobuf:"bytes,15,opt,name=activated_code,json=activatedCode,proto3" json:"activated_code,omitempty"`
+	// 邀请人信息
+	// 通过邀请码激活时记录谁邀请的
+	Inviter *InviterInfo `protobuf:"bytes,16,opt,name=inviter,proto3" json:"inviter,omitempty"`
+	// 当前额度配置
+	Quota *UserQuotaInfo `protobuf:"bytes,17,opt,name=quota,proto3" json:"quota,omitempty"`
+	// 用户的邀请码列表
+	// 用户激活时自动获得 3 个普通邀请码
+	InviteCodes []*InviteCodeDetail `protobuf:"bytes,18,rep,name=invite_codes,json=inviteCodes,proto3" json:"invite_codes,omitempty"`
+	// 注册时间（Unix 时间戳，秒）
+	CreatedAt     int64 `protobuf:"varint,19,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UserDetailData) Reset() {
+	*x = UserDetailData{}
+	mi := &file_admin_admin_proto_msgTypes[26]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UserDetailData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserDetailData) ProtoMessage() {}
+
+func (x *UserDetailData) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_admin_proto_msgTypes[26]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserDetailData.ProtoReflect.Descriptor instead.
+func (*UserDetailData) Descriptor() ([]byte, []int) {
+	return file_admin_admin_proto_rawDescGZIP(), []int{26}
+}
+
+func (x *UserDetailData) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *UserDetailData) GetPhone() string {
+	if x != nil {
+		return x.Phone
+	}
+	return ""
+}
+
+func (x *UserDetailData) GetPhoneHistory() []*PhoneChangeRecord {
+	if x != nil {
+		return x.PhoneHistory
+	}
+	return nil
+}
+
+func (x *UserDetailData) GetNickname() string {
+	if x != nil {
+		return x.Nickname
+	}
+	return ""
+}
+
+func (x *UserDetailData) GetAvatarUrl() string {
+	if x != nil {
+		return x.AvatarUrl
+	}
+	return ""
+}
+
+func (x *UserDetailData) GetIdentityType() string {
+	if x != nil {
+		return x.IdentityType
+	}
+	return ""
+}
+
+func (x *UserDetailData) GetOrgName() string {
+	if x != nil {
+		return x.OrgName
+	}
+	return ""
+}
+
+func (x *UserDetailData) GetAnnualClients() int32 {
+	if x != nil {
+		return x.AnnualClients
+	}
+	return 0
+}
+
+func (x *UserDetailData) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *UserDetailData) GetStatusUpdatedAt() int64 {
+	if x != nil {
+		return x.StatusUpdatedAt
+	}
+	return 0
+}
+
+func (x *UserDetailData) GetAppliedAt() int64 {
+	if x != nil {
+		return x.AppliedAt
+	}
+	return 0
+}
+
+func (x *UserDetailData) GetActivatedAt() int64 {
+	if x != nil {
+		return x.ActivatedAt
+	}
+	return 0
+}
+
+func (x *UserDetailData) GetActivatedBy() string {
+	if x != nil {
+		return x.ActivatedBy
+	}
+	return ""
+}
+
+func (x *UserDetailData) GetActivatedByAdminId() string {
+	if x != nil {
+		return x.ActivatedByAdminId
+	}
+	return ""
+}
+
+func (x *UserDetailData) GetActivatedCode() string {
+	if x != nil {
+		return x.ActivatedCode
+	}
+	return ""
+}
+
+func (x *UserDetailData) GetInviter() *InviterInfo {
+	if x != nil {
+		return x.Inviter
+	}
+	return nil
+}
+
+func (x *UserDetailData) GetQuota() *UserQuotaInfo {
+	if x != nil {
+		return x.Quota
+	}
+	return nil
+}
+
+func (x *UserDetailData) GetInviteCodes() []*InviteCodeDetail {
+	if x != nil {
+		return x.InviteCodes
+	}
+	return nil
+}
+
+func (x *UserDetailData) GetCreatedAt() int64 {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return 0
+}
+
+// PhoneChangeRecord - 手机号变更记录
+type PhoneChangeRecord struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 旧手机号
+	OldPhone string `protobuf:"bytes,1,opt,name=old_phone,json=oldPhone,proto3" json:"old_phone,omitempty"`
+	// 新手机号
+	NewPhone string `protobuf:"bytes,2,opt,name=new_phone,json=newPhone,proto3" json:"new_phone,omitempty"`
+	// 变更时间（Unix 时间戳，秒）
+	ChangedAt     int64 `protobuf:"varint,3,opt,name=changed_at,json=changedAt,proto3" json:"changed_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PhoneChangeRecord) Reset() {
+	*x = PhoneChangeRecord{}
+	mi := &file_admin_admin_proto_msgTypes[27]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PhoneChangeRecord) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PhoneChangeRecord) ProtoMessage() {}
+
+func (x *PhoneChangeRecord) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_admin_proto_msgTypes[27]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PhoneChangeRecord.ProtoReflect.Descriptor instead.
+func (*PhoneChangeRecord) Descriptor() ([]byte, []int) {
+	return file_admin_admin_proto_rawDescGZIP(), []int{27}
+}
+
+func (x *PhoneChangeRecord) GetOldPhone() string {
+	if x != nil {
+		return x.OldPhone
+	}
+	return ""
+}
+
+func (x *PhoneChangeRecord) GetNewPhone() string {
+	if x != nil {
+		return x.NewPhone
+	}
+	return ""
+}
+
+func (x *PhoneChangeRecord) GetChangedAt() int64 {
+	if x != nil {
+		return x.ChangedAt
+	}
+	return 0
+}
+
+// InviterInfo - 邀请人信息
+//
+// 记录邀请码的来源（用户邀请或管理员生成）
+type InviterInfo struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 邀请人类型
+	// 可选值:
+	// - "user": 用户邀请（通过用户的邀请码）
+	// - "admin": 管理员邀请（通过管理员生成的邀请码）
+	Kind string `protobuf:"bytes,1,opt,name=kind,proto3" json:"kind,omitempty"`
+	// 邀请人用户 ID（kind="user" 时有值）
+	UserId string `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	// 邀请人手机号（kind="user" 时有值，脱敏显示）
+	Phone string `protobuf:"bytes,3,opt,name=phone,proto3" json:"phone,omitempty"`
+	// 邀请人昵称（kind="user" 时有值）
+	Nickname string `protobuf:"bytes,4,opt,name=nickname,proto3" json:"nickname,omitempty"`
+	// 管理员 ID（kind="admin" 时有值）
+	AdminId       string `protobuf:"bytes,5,opt,name=admin_id,json=adminId,proto3" json:"admin_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *InviterInfo) Reset() {
+	*x = InviterInfo{}
+	mi := &file_admin_admin_proto_msgTypes[28]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *InviterInfo) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*InviterInfo) ProtoMessage() {}
+
+func (x *InviterInfo) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_admin_proto_msgTypes[28]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use InviterInfo.ProtoReflect.Descriptor instead.
+func (*InviterInfo) Descriptor() ([]byte, []int) {
+	return file_admin_admin_proto_rawDescGZIP(), []int{28}
+}
+
+func (x *InviterInfo) GetKind() string {
+	if x != nil {
+		return x.Kind
+	}
+	return ""
+}
+
+func (x *InviterInfo) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *InviterInfo) GetPhone() string {
+	if x != nil {
+		return x.Phone
+	}
+	return ""
+}
+
+func (x *InviterInfo) GetNickname() string {
+	if x != nil {
+		return x.Nickname
+	}
+	return ""
+}
+
+func (x *InviterInfo) GetAdminId() string {
+	if x != nil {
+		return x.AdminId
+	}
+	return ""
+}
+
+// InviteCodeDetail - 邀请码详情
+//
+// 用于用户详情页展示用户的邀请码列表
+type InviteCodeDetail struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 邀请码字符串（8 位大写字母+数字）
+	// 示例: "ABC12345"
+	Code string `protobuf:"bytes,1,opt,name=code,proto3" json:"code,omitempty"`
+	// 邀请码类型
+	// 可选值:
+	// - "normal": 普通邀请码
+	// - "unlimited": 不限额邀请码
+	Type string `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
+	// 邀请码状态
+	// 可选值:
+	// - "unused": 未使用
+	// - "used": 已使用
+	// - "revoked": 已作废
+	// - "suspended": 已暂停（用户被封禁时暂停）
+	Status string `protobuf:"bytes,3,opt,name=status,proto3" json:"status,omitempty"`
+	// 使用者信息（status="used" 时有值）
+	UsedBy *UserBrief `protobuf:"bytes,4,opt,name=used_by,json=usedBy,proto3" json:"used_by,omitempty"`
+	// 使用时间（Unix 时间戳，秒）
+	UsedAt int64 `protobuf:"varint,5,opt,name=used_at,json=usedAt,proto3" json:"used_at,omitempty"`
+	// 创建时间（Unix 时间戳，秒）
+	CreatedAt     int64 `protobuf:"varint,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *InviteCodeDetail) Reset() {
+	*x = InviteCodeDetail{}
+	mi := &file_admin_admin_proto_msgTypes[29]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *InviteCodeDetail) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*InviteCodeDetail) ProtoMessage() {}
+
+func (x *InviteCodeDetail) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_admin_proto_msgTypes[29]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use InviteCodeDetail.ProtoReflect.Descriptor instead.
+func (*InviteCodeDetail) Descriptor() ([]byte, []int) {
+	return file_admin_admin_proto_rawDescGZIP(), []int{29}
+}
+
+func (x *InviteCodeDetail) GetCode() string {
+	if x != nil {
+		return x.Code
+	}
+	return ""
+}
+
+func (x *InviteCodeDetail) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+func (x *InviteCodeDetail) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *InviteCodeDetail) GetUsedBy() *UserBrief {
+	if x != nil {
+		return x.UsedBy
+	}
+	return nil
+}
+
+func (x *InviteCodeDetail) GetUsedAt() int64 {
+	if x != nil {
+		return x.UsedAt
+	}
+	return 0
+}
+
+func (x *InviteCodeDetail) GetCreatedAt() int64 {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return 0
+}
+
+// UserBrief - 用户简要信息
+//
+// 用于在其他对象中引用用户时的简要展示
+type UserBrief struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 用户 ID
+	UserId string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	// 用户昵称
+	Nickname string `protobuf:"bytes,2,opt,name=nickname,proto3" json:"nickname,omitempty"`
+	// 手机号（脱敏显示，如 "138****1234"）
+	Phone         string `protobuf:"bytes,3,opt,name=phone,proto3" json:"phone,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UserBrief) Reset() {
+	*x = UserBrief{}
+	mi := &file_admin_admin_proto_msgTypes[30]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UserBrief) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserBrief) ProtoMessage() {}
+
+func (x *UserBrief) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_admin_proto_msgTypes[30]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserBrief.ProtoReflect.Descriptor instead.
+func (*UserBrief) Descriptor() ([]byte, []int) {
+	return file_admin_admin_proto_rawDescGZIP(), []int{30}
+}
+
+func (x *UserBrief) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *UserBrief) GetNickname() string {
+	if x != nil {
+		return x.Nickname
+	}
+	return ""
+}
+
+func (x *UserBrief) GetPhone() string {
+	if x != nil {
+		return x.Phone
+	}
+	return ""
+}
+
+// UserOperationsResponse - 用户操作记录响应
+type UserOperationsResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 业务状态码
+	Code int32 `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
+	// 响应消息
+	Message string `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	// 操作记录数据
+	Data          *UserOperationsData `protobuf:"bytes,3,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UserOperationsResponse) Reset() {
+	*x = UserOperationsResponse{}
+	mi := &file_admin_admin_proto_msgTypes[31]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UserOperationsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserOperationsResponse) ProtoMessage() {}
+
+func (x *UserOperationsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_admin_proto_msgTypes[31]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserOperationsResponse.ProtoReflect.Descriptor instead.
+func (*UserOperationsResponse) Descriptor() ([]byte, []int) {
+	return file_admin_admin_proto_rawDescGZIP(), []int{31}
+}
+
+func (x *UserOperationsResponse) GetCode() int32 {
+	if x != nil {
+		return x.Code
+	}
+	return 0
+}
+
+func (x *UserOperationsResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+func (x *UserOperationsResponse) GetData() *UserOperationsData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+// UserOperationsData - 用户操作记录数据
+type UserOperationsData struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 分页信息
+	PageInfo *PageInfo `protobuf:"bytes,1,opt,name=page_info,json=pageInfo,proto3" json:"page_info,omitempty"`
+	// 操作记录列表
+	Items         []*OperationRecord `protobuf:"bytes,2,rep,name=items,proto3" json:"items,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UserOperationsData) Reset() {
+	*x = UserOperationsData{}
+	mi := &file_admin_admin_proto_msgTypes[32]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UserOperationsData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserOperationsData) ProtoMessage() {}
+
+func (x *UserOperationsData) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_admin_proto_msgTypes[32]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserOperationsData.ProtoReflect.Descriptor instead.
+func (*UserOperationsData) Descriptor() ([]byte, []int) {
+	return file_admin_admin_proto_rawDescGZIP(), []int{32}
+}
+
+func (x *UserOperationsData) GetPageInfo() *PageInfo {
+	if x != nil {
+		return x.PageInfo
+	}
+	return nil
+}
+
+func (x *UserOperationsData) GetItems() []*OperationRecord {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
+// OperationRecord - 操作记录
+//
+// 记录管理员对用户执行的操作，用于审计
+type OperationRecord struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 操作类型
+	// 可选值:
+	// - "activate": 激活用户
+	// - "ban": 封禁用户
+	// - "unban": 解封用户
+	// - "delete": 删除用户
+	// - "set_quota": 设置限额
+	// - "set_unlimited": 设置不限额
+	// - "update_profile": 修改用户资料
+	// - "generate_code": 生成邀请码
+	// - "revoke_code": 作废邀请码
+	// - "regenerate_code": 重新生成邀请码
+	Operation string `protobuf:"bytes,1,opt,name=operation,proto3" json:"operation,omitempty"`
+	// 操作参数（JSON 字符串）
+	// 记录操作的具体参数，如:
+	// - 设置限额: {"daily_limit": 100}
+	// - 封禁用户: {"revoked_tokens": 2, "suspended_codes": 3}
+	Params string `protobuf:"bytes,2,opt,name=params,proto3" json:"params,omitempty"`
+	// 操作原因
+	Reason string `protobuf:"bytes,3,opt,name=reason,proto3" json:"reason,omitempty"`
+	// 操作者管理员 ID
+	AdminId string `protobuf:"bytes,4,opt,name=admin_id,json=adminId,proto3" json:"admin_id,omitempty"`
+	// 操作时间（Unix 时间戳，秒）
+	CreatedAt     int64 `protobuf:"varint,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OperationRecord) Reset() {
+	*x = OperationRecord{}
+	mi := &file_admin_admin_proto_msgTypes[33]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OperationRecord) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OperationRecord) ProtoMessage() {}
+
+func (x *OperationRecord) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_admin_proto_msgTypes[33]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OperationRecord.ProtoReflect.Descriptor instead.
+func (*OperationRecord) Descriptor() ([]byte, []int) {
+	return file_admin_admin_proto_rawDescGZIP(), []int{33}
+}
+
+func (x *OperationRecord) GetOperation() string {
+	if x != nil {
+		return x.Operation
+	}
+	return ""
+}
+
+func (x *OperationRecord) GetParams() string {
+	if x != nil {
+		return x.Params
+	}
+	return ""
+}
+
+func (x *OperationRecord) GetReason() string {
+	if x != nil {
+		return x.Reason
+	}
+	return ""
+}
+
+func (x *OperationRecord) GetAdminId() string {
+	if x != nil {
+		return x.AdminId
+	}
+	return ""
+}
+
+func (x *OperationRecord) GetCreatedAt() int64 {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return 0
+}
+
+// InviteCodeQuery - 邀请码列表查询请求
+type InviteCodeQuery struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 邀请码精确匹配
+	// 支持大小写，会自动转为大写匹配
+	Code string `protobuf:"bytes,1,opt,name=code,proto3" json:"code,omitempty"`
+	// 批次号筛选
+	// 同一批生成的邀请码共享一个 batch_id
+	BatchId string `protobuf:"bytes,2,opt,name=batch_id,json=batchId,proto3" json:"batch_id,omitempty"`
+	// 类型筛选
+	// 可选值: "normal"（普通）、"unlimited"（不限额）
+	Type string `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`
+	// 状态筛选
+	// 可选值:
+	// - "unused": 未使用
+	// - "used": 已使用
+	// - "revoked": 已作废
+	// - "suspended": 已暂停（用户被封禁时）
+	Status string `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`
+	// 生成者类型筛选
+	// 可选值: "user"（用户生成）、"admin"（管理员生成）
+	InviterKind string `protobuf:"bytes,5,opt,name=inviter_kind,json=inviterKind,proto3" json:"inviter_kind,omitempty"`
+	// 生成者用户 ID（inviter_kind="user" 时）
+	InviterUserId string `protobuf:"bytes,6,opt,name=inviter_user_id,json=inviterUserId,proto3" json:"inviter_user_id,omitempty"`
+	// 生成者管理员 ID（inviter_kind="admin" 时）
+	InviterAdminId string `protobuf:"bytes,7,opt,name=inviter_admin_id,json=inviterAdminId,proto3" json:"inviter_admin_id,omitempty"`
+	// 使用者用户 ID
+	// 筛选被指定用户使用的邀请码
+	UsedByUserId string `protobuf:"bytes,8,opt,name=used_by_user_id,json=usedByUserId,proto3" json:"used_by_user_id,omitempty"`
+	// 创建时间范围
+	CreatedAt *TimeRange `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	// 排序字段
+	// 可选值: "created_at"（默认）、"used_at"
+	SortBy string `protobuf:"bytes,10,opt,name=sort_by,json=sortBy,proto3" json:"sort_by,omitempty"`
+	// 排序方向
+	// 可选值: "desc"（默认）、"asc"
+	SortOrder     string      `protobuf:"bytes,11,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
+	Pagination    *Pagination `protobuf:"bytes,12,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *InviteCodeQuery) Reset() {
+	*x = InviteCodeQuery{}
+	mi := &file_admin_admin_proto_msgTypes[34]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *InviteCodeQuery) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*InviteCodeQuery) ProtoMessage() {}
+
+func (x *InviteCodeQuery) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_admin_proto_msgTypes[34]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use InviteCodeQuery.ProtoReflect.Descriptor instead.
+func (*InviteCodeQuery) Descriptor() ([]byte, []int) {
+	return file_admin_admin_proto_rawDescGZIP(), []int{34}
+}
+
+func (x *InviteCodeQuery) GetCode() string {
+	if x != nil {
+		return x.Code
+	}
+	return ""
+}
+
+func (x *InviteCodeQuery) GetBatchId() string {
+	if x != nil {
+		return x.BatchId
+	}
+	return ""
+}
+
+func (x *InviteCodeQuery) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+func (x *InviteCodeQuery) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *InviteCodeQuery) GetInviterKind() string {
+	if x != nil {
+		return x.InviterKind
+	}
+	return ""
+}
+
+func (x *InviteCodeQuery) GetInviterUserId() string {
+	if x != nil {
+		return x.InviterUserId
+	}
+	return ""
+}
+
+func (x *InviteCodeQuery) GetInviterAdminId() string {
+	if x != nil {
+		return x.InviterAdminId
+	}
+	return ""
+}
+
+func (x *InviteCodeQuery) GetUsedByUserId() string {
+	if x != nil {
+		return x.UsedByUserId
+	}
+	return ""
+}
+
+func (x *InviteCodeQuery) GetCreatedAt() *TimeRange {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *InviteCodeQuery) GetSortBy() string {
+	if x != nil {
+		return x.SortBy
+	}
+	return ""
+}
+
+func (x *InviteCodeQuery) GetSortOrder() string {
+	if x != nil {
+		return x.SortOrder
+	}
+	return ""
+}
+
+func (x *InviteCodeQuery) GetPagination() *Pagination {
+	if x != nil {
+		return x.Pagination
+	}
+	return nil
+}
+
+// BatchQueryCodesRequest - 批量查询邀请码请求
+type BatchQueryCodesRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 邀请码字符串列表
+	// 最多 100 个，超出返回错误
+	// 支持大小写，会自动转为大写匹配
+	Codes         []string `protobuf:"bytes,1,rep,name=codes,proto3" json:"codes,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *BatchQueryCodesRequest) Reset() {
+	*x = BatchQueryCodesRequest{}
+	mi := &file_admin_admin_proto_msgTypes[35]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BatchQueryCodesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BatchQueryCodesRequest) ProtoMessage() {}
+
+func (x *BatchQueryCodesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_admin_proto_msgTypes[35]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BatchQueryCodesRequest.ProtoReflect.Descriptor instead.
+func (*BatchQueryCodesRequest) Descriptor() ([]byte, []int) {
+	return file_admin_admin_proto_rawDescGZIP(), []int{35}
+}
+
+func (x *BatchQueryCodesRequest) GetCodes() []string {
+	if x != nil {
+		return x.Codes
+	}
+	return nil
+}
+
+// GenerateCodesRequest - 生成邀请码请求
+type GenerateCodesRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 邀请码类型（必填）
+	// 可选值:
+	// - "normal": 普通邀请码（Ops、SuperAdmin 可生成）
+	// - "unlimited": 不限额邀请码（仅 SuperAdmin 可生成）
+	Type string `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
+	// 生成数量（必填）
+	// 范围: 1-100
+	Count int32 `protobuf:"varint,2,opt,name=count,proto3" json:"count,omitempty"`
+	// 备注说明（必填）
+	// 同一批次的邀请码共享此备注
+	// 示例: "2026年2月营销活动"、"内部测试用"
+	Note          string `protobuf:"bytes,3,opt,name=note,proto3" json:"note,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GenerateCodesRequest) Reset() {
+	*x = GenerateCodesRequest{}
+	mi := &file_admin_admin_proto_msgTypes[36]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GenerateCodesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GenerateCodesRequest) ProtoMessage() {}
+
+func (x *GenerateCodesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_admin_proto_msgTypes[36]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GenerateCodesRequest.ProtoReflect.Descriptor instead.
+func (*GenerateCodesRequest) Descriptor() ([]byte, []int) {
+	return file_admin_admin_proto_rawDescGZIP(), []int{36}
+}
+
+func (x *GenerateCodesRequest) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+func (x *GenerateCodesRequest) GetCount() int32 {
+	if x != nil {
+		return x.Count
+	}
+	return 0
+}
+
+func (x *GenerateCodesRequest) GetNote() string {
+	if x != nil {
+		return x.Note
+	}
+	return ""
+}
+
+// RegenerateCodesRequest - 重新生成邀请码请求（换码）
+type RegenerateCodesRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 要作废并重新生成的邀请码列表
+	// 仅对 "unused" 状态的邀请码有效
+	Codes []string `protobuf:"bytes,1,rep,name=codes,proto3" json:"codes,omitempty"`
+	// 换码原因（必填）
+	// 示例: "原码已泄露"、"用户申请换码"
+	Reason        string `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RegenerateCodesRequest) Reset() {
+	*x = RegenerateCodesRequest{}
+	mi := &file_admin_admin_proto_msgTypes[37]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RegenerateCodesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RegenerateCodesRequest) ProtoMessage() {}
+
+func (x *RegenerateCodesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_admin_proto_msgTypes[37]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RegenerateCodesRequest.ProtoReflect.Descriptor instead.
+func (*RegenerateCodesRequest) Descriptor() ([]byte, []int) {
+	return file_admin_admin_proto_rawDescGZIP(), []int{37}
+}
+
+func (x *RegenerateCodesRequest) GetCodes() []string {
+	if x != nil {
+		return x.Codes
+	}
+	return nil
+}
+
+func (x *RegenerateCodesRequest) GetReason() string {
+	if x != nil {
+		return x.Reason
+	}
+	return ""
+}
+
+// RevokeCodeRequest - 作废邀请码请求
+type RevokeCodeRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 邀请码字符串（必填）
+	Code string `protobuf:"bytes,1,opt,name=code,proto3" json:"code,omitempty"`
+	// 作废原因（必填）
+	Reason        string `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RevokeCodeRequest) Reset() {
+	*x = RevokeCodeRequest{}
+	mi := &file_admin_admin_proto_msgTypes[38]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RevokeCodeRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RevokeCodeRequest) ProtoMessage() {}
+
+func (x *RevokeCodeRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_admin_proto_msgTypes[38]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RevokeCodeRequest.ProtoReflect.Descriptor instead.
+func (*RevokeCodeRequest) Descriptor() ([]byte, []int) {
+	return file_admin_admin_proto_rawDescGZIP(), []int{38}
+}
+
+func (x *RevokeCodeRequest) GetCode() string {
+	if x != nil {
+		return x.Code
+	}
+	return ""
+}
+
+func (x *RevokeCodeRequest) GetReason() string {
+	if x != nil {
+		return x.Reason
+	}
+	return ""
+}
+
+// InviteCodeListResponse - 邀请码列表响应
+type InviteCodeListResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Code          int32                  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	Data          *InviteCodeListData    `protobuf:"bytes,3,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *InviteCodeListResponse) Reset() {
+	*x = InviteCodeListResponse{}
+	mi := &file_admin_admin_proto_msgTypes[39]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *InviteCodeListResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*InviteCodeListResponse) ProtoMessage() {}
+
+func (x *InviteCodeListResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_admin_proto_msgTypes[39]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use InviteCodeListResponse.ProtoReflect.Descriptor instead.
+func (*InviteCodeListResponse) Descriptor() ([]byte, []int) {
+	return file_admin_admin_proto_rawDescGZIP(), []int{39}
+}
+
+func (x *InviteCodeListResponse) GetCode() int32 {
+	if x != nil {
+		return x.Code
+	}
+	return 0
+}
+
+func (x *InviteCodeListResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+func (x *InviteCodeListResponse) GetData() *InviteCodeListData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+// InviteCodeListData - 邀请码列表数据
+type InviteCodeListData struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 分页信息
+	PageInfo *PageInfo `protobuf:"bytes,1,opt,name=page_info,json=pageInfo,proto3" json:"page_info,omitempty"`
+	// 邀请码列表
+	Items         []*InviteCodeListItem `protobuf:"bytes,2,rep,name=items,proto3" json:"items,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *InviteCodeListData) Reset() {
+	*x = InviteCodeListData{}
+	mi := &file_admin_admin_proto_msgTypes[40]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *InviteCodeListData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*InviteCodeListData) ProtoMessage() {}
+
+func (x *InviteCodeListData) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_admin_proto_msgTypes[40]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use InviteCodeListData.ProtoReflect.Descriptor instead.
+func (*InviteCodeListData) Descriptor() ([]byte, []int) {
+	return file_admin_admin_proto_rawDescGZIP(), []int{40}
+}
+
+func (x *InviteCodeListData) GetPageInfo() *PageInfo {
+	if x != nil {
+		return x.PageInfo
+	}
+	return nil
+}
+
+func (x *InviteCodeListData) GetItems() []*InviteCodeListItem {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
+// InviteCodeListItem - 邀请码列表项
+//
+// 包含邀请码的完整信息
+type InviteCodeListItem struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 邀请码字符串（8 位大写字母+数字）
+	Code string `protobuf:"bytes,1,opt,name=code,proto3" json:"code,omitempty"`
+	// 邀请码类型: "normal" 或 "unlimited"
+	Type string `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
+	// 邀请码状态: "unused"、"used"、"revoked"、"suspended"
+	Status string `protobuf:"bytes,3,opt,name=status,proto3" json:"status,omitempty"`
+	// 备注说明
+	Note string `protobuf:"bytes,4,opt,name=note,proto3" json:"note,omitempty"`
+	// 生成者类型: "user" 或 "admin"
+	InviterKind string `protobuf:"bytes,5,opt,name=inviter_kind,json=inviterKind,proto3" json:"inviter_kind,omitempty"`
+	// 生成者管理员 ID（inviter_kind="admin" 时有值）
+	InviterAdminId string `protobuf:"bytes,6,opt,name=inviter_admin_id,json=inviterAdminId,proto3" json:"inviter_admin_id,omitempty"`
+	// 生成者用户信息（inviter_kind="user" 时有值）
+	InviterUser *UserBrief `protobuf:"bytes,7,opt,name=inviter_user,json=inviterUser,proto3" json:"inviter_user,omitempty"`
+	// 使用者信息（status="used" 时有值）
+	UsedBy *UserBrief `protobuf:"bytes,8,opt,name=used_by,json=usedBy,proto3" json:"used_by,omitempty"`
+	// 使用时间（Unix 时间戳，秒）
+	UsedAt int64 `protobuf:"varint,9,opt,name=used_at,json=usedAt,proto3" json:"used_at,omitempty"`
+	// 批次号（同一批生成的邀请码共享）
+	BatchId string `protobuf:"bytes,10,opt,name=batch_id,json=batchId,proto3" json:"batch_id,omitempty"`
+	// 创建时间（Unix 时间戳，秒）
+	CreatedAt     int64 `protobuf:"varint,11,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *InviteCodeListItem) Reset() {
+	*x = InviteCodeListItem{}
+	mi := &file_admin_admin_proto_msgTypes[41]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *InviteCodeListItem) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*InviteCodeListItem) ProtoMessage() {}
+
+func (x *InviteCodeListItem) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_admin_proto_msgTypes[41]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use InviteCodeListItem.ProtoReflect.Descriptor instead.
+func (*InviteCodeListItem) Descriptor() ([]byte, []int) {
+	return file_admin_admin_proto_rawDescGZIP(), []int{41}
+}
+
+func (x *InviteCodeListItem) GetCode() string {
+	if x != nil {
+		return x.Code
+	}
+	return ""
+}
+
+func (x *InviteCodeListItem) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+func (x *InviteCodeListItem) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *InviteCodeListItem) GetNote() string {
+	if x != nil {
+		return x.Note
+	}
+	return ""
+}
+
+func (x *InviteCodeListItem) GetInviterKind() string {
+	if x != nil {
+		return x.InviterKind
+	}
+	return ""
+}
+
+func (x *InviteCodeListItem) GetInviterAdminId() string {
+	if x != nil {
+		return x.InviterAdminId
+	}
+	return ""
+}
+
+func (x *InviteCodeListItem) GetInviterUser() *UserBrief {
+	if x != nil {
+		return x.InviterUser
+	}
+	return nil
+}
+
+func (x *InviteCodeListItem) GetUsedBy() *UserBrief {
+	if x != nil {
+		return x.UsedBy
+	}
+	return nil
+}
+
+func (x *InviteCodeListItem) GetUsedAt() int64 {
+	if x != nil {
+		return x.UsedAt
+	}
+	return 0
+}
+
+func (x *InviteCodeListItem) GetBatchId() string {
+	if x != nil {
+		return x.BatchId
+	}
+	return ""
+}
+
+func (x *InviteCodeListItem) GetCreatedAt() int64 {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return 0
+}
+
+// BatchQueryCodesResponse - 批量查询邀请码响应
+type BatchQueryCodesResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Code          int32                  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	Data          *BatchQueryCodesData   `protobuf:"bytes,3,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *BatchQueryCodesResponse) Reset() {
+	*x = BatchQueryCodesResponse{}
+	mi := &file_admin_admin_proto_msgTypes[42]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BatchQueryCodesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BatchQueryCodesResponse) ProtoMessage() {}
+
+func (x *BatchQueryCodesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_admin_proto_msgTypes[42]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BatchQueryCodesResponse.ProtoReflect.Descriptor instead.
+func (*BatchQueryCodesResponse) Descriptor() ([]byte, []int) {
+	return file_admin_admin_proto_rawDescGZIP(), []int{42}
+}
+
+func (x *BatchQueryCodesResponse) GetCode() int32 {
+	if x != nil {
+		return x.Code
+	}
+	return 0
+}
+
+func (x *BatchQueryCodesResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+func (x *BatchQueryCodesResponse) GetData() *BatchQueryCodesData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+// BatchQueryCodesData - 批量查询邀请码数据
+type BatchQueryCodesData struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 找到的邀请码列表
+	Found []*InviteCodeListItem `protobuf:"bytes,1,rep,name=found,proto3" json:"found,omitempty"`
+	// 未找到的邀请码列表
+	// 返回原始请求中不存在的邀请码字符串
+	NotFound      []string `protobuf:"bytes,2,rep,name=not_found,json=notFound,proto3" json:"not_found,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *BatchQueryCodesData) Reset() {
+	*x = BatchQueryCodesData{}
+	mi := &file_admin_admin_proto_msgTypes[43]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BatchQueryCodesData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BatchQueryCodesData) ProtoMessage() {}
+
+func (x *BatchQueryCodesData) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_admin_proto_msgTypes[43]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BatchQueryCodesData.ProtoReflect.Descriptor instead.
+func (*BatchQueryCodesData) Descriptor() ([]byte, []int) {
+	return file_admin_admin_proto_rawDescGZIP(), []int{43}
+}
+
+func (x *BatchQueryCodesData) GetFound() []*InviteCodeListItem {
+	if x != nil {
+		return x.Found
+	}
+	return nil
+}
+
+func (x *BatchQueryCodesData) GetNotFound() []string {
+	if x != nil {
+		return x.NotFound
+	}
+	return nil
+}
+
+// GenerateCodesResponse - 生成邀请码响应
+type GenerateCodesResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Code          int32                  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	Data          *GenerateCodesData     `protobuf:"bytes,3,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GenerateCodesResponse) Reset() {
+	*x = GenerateCodesResponse{}
+	mi := &file_admin_admin_proto_msgTypes[44]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GenerateCodesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GenerateCodesResponse) ProtoMessage() {}
+
+func (x *GenerateCodesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_admin_proto_msgTypes[44]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GenerateCodesResponse.ProtoReflect.Descriptor instead.
+func (*GenerateCodesResponse) Descriptor() ([]byte, []int) {
+	return file_admin_admin_proto_rawDescGZIP(), []int{44}
+}
+
+func (x *GenerateCodesResponse) GetCode() int32 {
+	if x != nil {
+		return x.Code
+	}
+	return 0
+}
+
+func (x *GenerateCodesResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+func (x *GenerateCodesResponse) GetData() *GenerateCodesData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+// GenerateCodesData - 生成邀请码数据
+type GenerateCodesData struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 批次号（用于追踪和批量导出）
+	BatchId string `protobuf:"bytes,1,opt,name=batch_id,json=batchId,proto3" json:"batch_id,omitempty"`
+	// 生成的邀请码列表
+	Codes []string `protobuf:"bytes,2,rep,name=codes,proto3" json:"codes,omitempty"`
+	// 邀请码类型
+	Type string `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`
+	// 实际生成数量
+	Count         int32 `protobuf:"varint,4,opt,name=count,proto3" json:"count,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GenerateCodesData) Reset() {
+	*x = GenerateCodesData{}
+	mi := &file_admin_admin_proto_msgTypes[45]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GenerateCodesData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GenerateCodesData) ProtoMessage() {}
+
+func (x *GenerateCodesData) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_admin_proto_msgTypes[45]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GenerateCodesData.ProtoReflect.Descriptor instead.
+func (*GenerateCodesData) Descriptor() ([]byte, []int) {
+	return file_admin_admin_proto_rawDescGZIP(), []int{45}
+}
+
+func (x *GenerateCodesData) GetBatchId() string {
+	if x != nil {
+		return x.BatchId
+	}
+	return ""
+}
+
+func (x *GenerateCodesData) GetCodes() []string {
+	if x != nil {
+		return x.Codes
+	}
+	return nil
+}
+
+func (x *GenerateCodesData) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+func (x *GenerateCodesData) GetCount() int32 {
+	if x != nil {
+		return x.Count
+	}
+	return 0
+}
+
+// RegenerateCodesResponse - 重新生成邀请码响应
+type RegenerateCodesResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Code          int32                  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	Data          *RegenerateCodesData   `protobuf:"bytes,3,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RegenerateCodesResponse) Reset() {
+	*x = RegenerateCodesResponse{}
+	mi := &file_admin_admin_proto_msgTypes[46]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RegenerateCodesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RegenerateCodesResponse) ProtoMessage() {}
+
+func (x *RegenerateCodesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_admin_proto_msgTypes[46]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RegenerateCodesResponse.ProtoReflect.Descriptor instead.
+func (*RegenerateCodesResponse) Descriptor() ([]byte, []int) {
+	return file_admin_admin_proto_rawDescGZIP(), []int{46}
+}
+
+func (x *RegenerateCodesResponse) GetCode() int32 {
+	if x != nil {
+		return x.Code
+	}
+	return 0
+}
+
+func (x *RegenerateCodesResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+func (x *RegenerateCodesResponse) GetData() *RegenerateCodesData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+// RegenerateCodesData - 重新生成邀请码数据
+type RegenerateCodesData struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 被作废的邀请码列表
+	Revoked []string `protobuf:"bytes,1,rep,name=revoked,proto3" json:"revoked,omitempty"`
+	// 新生成的邀请码列表
+	// 与 revoked 一一对应
+	Generated     []string `protobuf:"bytes,2,rep,name=generated,proto3" json:"generated,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RegenerateCodesData) Reset() {
+	*x = RegenerateCodesData{}
+	mi := &file_admin_admin_proto_msgTypes[47]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RegenerateCodesData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RegenerateCodesData) ProtoMessage() {}
+
+func (x *RegenerateCodesData) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_admin_proto_msgTypes[47]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RegenerateCodesData.ProtoReflect.Descriptor instead.
+func (*RegenerateCodesData) Descriptor() ([]byte, []int) {
+	return file_admin_admin_proto_rawDescGZIP(), []int{47}
+}
+
+func (x *RegenerateCodesData) GetRevoked() []string {
+	if x != nil {
+		return x.Revoked
+	}
+	return nil
+}
+
+func (x *RegenerateCodesData) GetGenerated() []string {
+	if x != nil {
+		return x.Generated
+	}
+	return nil
+}
+
+// InviteChainResponse - 邀请链响应
+type InviteChainResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Code          int32                  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	Data          *InviteChainData       `protobuf:"bytes,3,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *InviteChainResponse) Reset() {
+	*x = InviteChainResponse{}
+	mi := &file_admin_admin_proto_msgTypes[48]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *InviteChainResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*InviteChainResponse) ProtoMessage() {}
+
+func (x *InviteChainResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_admin_proto_msgTypes[48]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use InviteChainResponse.ProtoReflect.Descriptor instead.
+func (*InviteChainResponse) Descriptor() ([]byte, []int) {
+	return file_admin_admin_proto_rawDescGZIP(), []int{48}
+}
+
+func (x *InviteChainResponse) GetCode() int32 {
+	if x != nil {
+		return x.Code
+	}
+	return 0
+}
+
+func (x *InviteChainResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+func (x *InviteChainResponse) GetData() *InviteChainData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+// InviteChainData - 邀请链数据
+//
+// 展示用户的邀请关系：谁邀请了他 + 他邀请了谁
+type InviteChainData struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 当前用户信息
+	User *InviteChainUser `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
+	// 邀请当前用户的人（上级）
+	// 如果是自然激活（auto_release）或管理员直接激活，此字段为 null
+	InvitedBy *InvitedByInfo `protobuf:"bytes,2,opt,name=invited_by,json=invitedBy,proto3" json:"invited_by,omitempty"`
+	// 当前用户邀请的人列表（下级）
+	// 按邀请时间倒序排列
+	InvitedUsers  []*InviteChainInvitee `protobuf:"bytes,3,rep,name=invited_users,json=invitedUsers,proto3" json:"invited_users,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *InviteChainData) Reset() {
+	*x = InviteChainData{}
+	mi := &file_admin_admin_proto_msgTypes[49]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *InviteChainData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*InviteChainData) ProtoMessage() {}
+
+func (x *InviteChainData) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_admin_proto_msgTypes[49]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use InviteChainData.ProtoReflect.Descriptor instead.
+func (*InviteChainData) Descriptor() ([]byte, []int) {
+	return file_admin_admin_proto_rawDescGZIP(), []int{49}
+}
+
+func (x *InviteChainData) GetUser() *InviteChainUser {
+	if x != nil {
+		return x.User
+	}
+	return nil
+}
+
+func (x *InviteChainData) GetInvitedBy() *InvitedByInfo {
+	if x != nil {
+		return x.InvitedBy
+	}
+	return nil
+}
+
+func (x *InviteChainData) GetInvitedUsers() []*InviteChainInvitee {
+	if x != nil {
+		return x.InvitedUsers
+	}
+	return nil
+}
+
+// InviteChainUser - 邀请链中的用户信息
+type InviteChainUser struct {
+	state    protoimpl.MessageState `protogen:"open.v1"`
+	UserId   string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Nickname string                 `protobuf:"bytes,2,opt,name=nickname,proto3" json:"nickname,omitempty"`
+	// 手机号（脱敏显示）
+	Phone string `protobuf:"bytes,3,opt,name=phone,proto3" json:"phone,omitempty"`
+	// 激活方式: "auto_release"、"invite"、"admin"
+	ActivatedBy string `protobuf:"bytes,4,opt,name=activated_by,json=activatedBy,proto3" json:"activated_by,omitempty"`
+	// 激活时间（Unix 时间戳，秒）
+	ActivatedAt   int64 `protobuf:"varint,5,opt,name=activated_at,json=activatedAt,proto3" json:"activated_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *InviteChainUser) Reset() {
+	*x = InviteChainUser{}
+	mi := &file_admin_admin_proto_msgTypes[50]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *InviteChainUser) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*InviteChainUser) ProtoMessage() {}
+
+func (x *InviteChainUser) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_admin_proto_msgTypes[50]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use InviteChainUser.ProtoReflect.Descriptor instead.
+func (*InviteChainUser) Descriptor() ([]byte, []int) {
+	return file_admin_admin_proto_rawDescGZIP(), []int{50}
+}
+
+func (x *InviteChainUser) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *InviteChainUser) GetNickname() string {
+	if x != nil {
+		return x.Nickname
+	}
+	return ""
+}
+
+func (x *InviteChainUser) GetPhone() string {
+	if x != nil {
+		return x.Phone
+	}
+	return ""
+}
+
+func (x *InviteChainUser) GetActivatedBy() string {
+	if x != nil {
+		return x.ActivatedBy
+	}
+	return ""
+}
+
+func (x *InviteChainUser) GetActivatedAt() int64 {
+	if x != nil {
+		return x.ActivatedAt
+	}
+	return 0
+}
+
+// InvitedByInfo - 被谁邀请信息（上级）
+type InvitedByInfo struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 邀请人类型: "user" 或 "admin"
+	Kind string `protobuf:"bytes,1,opt,name=kind,proto3" json:"kind,omitempty"`
+	// 邀请人用户 ID（kind="user" 时有值）
+	UserId string `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	// 邀请人昵称（kind="user" 时有值）
+	Nickname string `protobuf:"bytes,3,opt,name=nickname,proto3" json:"nickname,omitempty"`
+	// 邀请人手机号（kind="user" 时有值，脱敏显示）
+	Phone string `protobuf:"bytes,4,opt,name=phone,proto3" json:"phone,omitempty"`
+	// 管理员 ID（kind="admin" 时有值）
+	AdminId string `protobuf:"bytes,5,opt,name=admin_id,json=adminId,proto3" json:"admin_id,omitempty"`
+	// 使用的邀请码
+	Code          string `protobuf:"bytes,6,opt,name=code,proto3" json:"code,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *InvitedByInfo) Reset() {
+	*x = InvitedByInfo{}
+	mi := &file_admin_admin_proto_msgTypes[51]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *InvitedByInfo) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*InvitedByInfo) ProtoMessage() {}
+
+func (x *InvitedByInfo) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_admin_proto_msgTypes[51]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use InvitedByInfo.ProtoReflect.Descriptor instead.
+func (*InvitedByInfo) Descriptor() ([]byte, []int) {
+	return file_admin_admin_proto_rawDescGZIP(), []int{51}
+}
+
+func (x *InvitedByInfo) GetKind() string {
+	if x != nil {
+		return x.Kind
+	}
+	return ""
+}
+
+func (x *InvitedByInfo) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *InvitedByInfo) GetNickname() string {
+	if x != nil {
+		return x.Nickname
+	}
+	return ""
+}
+
+func (x *InvitedByInfo) GetPhone() string {
+	if x != nil {
+		return x.Phone
+	}
+	return ""
+}
+
+func (x *InvitedByInfo) GetAdminId() string {
+	if x != nil {
+		return x.AdminId
+	}
+	return ""
+}
+
+func (x *InvitedByInfo) GetCode() string {
+	if x != nil {
+		return x.Code
+	}
+	return ""
+}
+
+// InviteChainInvitee - 邀请链中的被邀请人（下级）
+type InviteChainInvitee struct {
+	state    protoimpl.MessageState `protogen:"open.v1"`
+	UserId   string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Nickname string                 `protobuf:"bytes,2,opt,name=nickname,proto3" json:"nickname,omitempty"`
+	// 手机号（脱敏显示）
+	Phone string `protobuf:"bytes,3,opt,name=phone,proto3" json:"phone,omitempty"`
+	// 使用的邀请码
+	Code string `protobuf:"bytes,4,opt,name=code,proto3" json:"code,omitempty"`
+	// 激活时间（Unix 时间戳，秒）
+	ActivatedAt   int64 `protobuf:"varint,5,opt,name=activated_at,json=activatedAt,proto3" json:"activated_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *InviteChainInvitee) Reset() {
+	*x = InviteChainInvitee{}
+	mi := &file_admin_admin_proto_msgTypes[52]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *InviteChainInvitee) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*InviteChainInvitee) ProtoMessage() {}
+
+func (x *InviteChainInvitee) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_admin_proto_msgTypes[52]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use InviteChainInvitee.ProtoReflect.Descriptor instead.
+func (*InviteChainInvitee) Descriptor() ([]byte, []int) {
+	return file_admin_admin_proto_rawDescGZIP(), []int{52}
+}
+
+func (x *InviteChainInvitee) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *InviteChainInvitee) GetNickname() string {
+	if x != nil {
+		return x.Nickname
+	}
+	return ""
+}
+
+func (x *InviteChainInvitee) GetPhone() string {
+	if x != nil {
+		return x.Phone
+	}
+	return ""
+}
+
+func (x *InviteChainInvitee) GetCode() string {
+	if x != nil {
+		return x.Code
+	}
+	return ""
+}
+
+func (x *InviteChainInvitee) GetActivatedAt() int64 {
+	if x != nil {
+		return x.ActivatedAt
+	}
+	return 0
+}
+
 var File_admin_admin_proto protoreflect.FileDescriptor
 
 const file_admin_admin_proto_rawDesc = "" +
 	"\n" +
-	"\x11admin/admin.proto\x12\x05admin\x1a\x1cgoogle/api/annotations.proto\"~\n" +
+	"\x11admin/admin.proto\x12\x05admin\x1a\x1cgoogle/api/annotations.proto\x1a\x18admin/admin_common.proto\"~\n" +
 	"\x04User\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1a\n" +
 	"\busername\x18\x02 \x01(\tR\busername\x12\x14\n" +
@@ -626,7 +3921,261 @@ const file_admin_admin_proto_rawDesc = "" +
 	"\x13RefreshTokenRequest\x12\x14\n" +
 	"\x05token\x18\x01 \x01(\tR\x05token\",\n" +
 	"\x14RefreshTokenResponse\x12\x14\n" +
-	"\x05token\x18\x01 \x01(\tR\x05token2\x90\x02\n" +
+	"\x05token\x18\x01 \x01(\tR\x05token\"(\n" +
+	"\rUserIdRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\"\xe3\x03\n" +
+	"\tUserQuery\x12\x18\n" +
+	"\akeyword\x18\x01 \x01(\tR\akeyword\x12\x1f\n" +
+	"\vinvite_code\x18\x02 \x01(\tR\n" +
+	"inviteCode\x12#\n" +
+	"\rinviter_phone\x18\x03 \x01(\tR\finviterPhone\x12&\n" +
+	"\x0finviter_user_id\x18\x04 \x01(\tR\rinviterUserId\x12\x16\n" +
+	"\x06status\x18\x05 \x03(\tR\x06status\x12#\n" +
+	"\ridentity_type\x18\x06 \x01(\tR\fidentityType\x12\x1d\n" +
+	"\n" +
+	"quota_type\x18\a \x01(\tR\tquotaType\x12!\n" +
+	"\factivated_by\x18\b \x01(\tR\vactivatedBy\x12/\n" +
+	"\n" +
+	"created_at\x18\t \x01(\v2\x10.admin.TimeRangeR\tcreatedAt\x123\n" +
+	"\factivated_at\x18\n" +
+	" \x01(\v2\x10.admin.TimeRangeR\vactivatedAt\x12\x17\n" +
+	"\asort_by\x18\v \x01(\tR\x06sortBy\x12\x1d\n" +
+	"\n" +
+	"sort_order\x18\f \x01(\tR\tsortOrder\x121\n" +
+	"\n" +
+	"pagination\x18\r \x01(\v2\x11.admin.PaginationR\n" +
+	"pagination\"F\n" +
+	"\x13ActivateUserRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x16\n" +
+	"\x06reason\x18\x02 \x01(\tR\x06reason\"A\n" +
+	"\x0eBanUserRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x16\n" +
+	"\x06reason\x18\x02 \x01(\tR\x06reason\"C\n" +
+	"\x10UnbanUserRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x16\n" +
+	"\x06reason\x18\x02 \x01(\tR\x06reason\"D\n" +
+	"\x11DeleteUserRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x16\n" +
+	"\x06reason\x18\x02 \x01(\tR\x06reason\"\xb0\x01\n" +
+	"\x14UpdateProfileRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12(\n" +
+	"\ridentity_type\x18\x02 \x01(\tH\x00R\fidentityType\x88\x01\x01\x12\x1e\n" +
+	"\borg_name\x18\x03 \x01(\tH\x01R\aorgName\x88\x01\x01\x12\x16\n" +
+	"\x06reason\x18\x04 \x01(\tR\x06reasonB\x10\n" +
+	"\x0e_identity_typeB\v\n" +
+	"\t_org_name\"\x9b\x01\n" +
+	"\x0fSetQuotaRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12!\n" +
+	"\fis_unlimited\x18\x02 \x01(\bR\visUnlimited\x12$\n" +
+	"\vdaily_limit\x18\x03 \x01(\x05H\x00R\n" +
+	"dailyLimit\x88\x01\x01\x12\x16\n" +
+	"\x06reason\x18\x04 \x01(\tR\x06reasonB\x0e\n" +
+	"\f_daily_limit\"\x81\x01\n" +
+	"\x13UserOperationsQuery\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x1e\n" +
+	"\n" +
+	"operations\x18\x02 \x03(\tR\n" +
+	"operations\x121\n" +
+	"\n" +
+	"pagination\x18\x03 \x01(\v2\x11.admin.PaginationR\n" +
+	"pagination\"i\n" +
+	"\x10UserListResponse\x12\x12\n" +
+	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\x12'\n" +
+	"\x04data\x18\x03 \x01(\v2\x13.admin.UserListDataR\x04data\"g\n" +
+	"\fUserListData\x12,\n" +
+	"\tpage_info\x18\x01 \x01(\v2\x0f.admin.PageInfoR\bpageInfo\x12)\n" +
+	"\x05items\x18\x02 \x03(\v2\x13.admin.UserListItemR\x05items\"\xdc\x02\n" +
+	"\fUserListItem\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x14\n" +
+	"\x05phone\x18\x02 \x01(\tR\x05phone\x12\x1a\n" +
+	"\bnickname\x18\x03 \x01(\tR\bnickname\x12#\n" +
+	"\ridentity_type\x18\x04 \x01(\tR\fidentityType\x12\x19\n" +
+	"\borg_name\x18\x05 \x01(\tR\aorgName\x12\x16\n" +
+	"\x06status\x18\x06 \x01(\tR\x06status\x12*\n" +
+	"\x05quota\x18\a \x01(\v2\x14.admin.UserQuotaInfoR\x05quota\x12;\n" +
+	"\x0einvite_summary\x18\b \x01(\v2\x14.admin.InviteSummaryR\rinviteSummary\x12!\n" +
+	"\factivated_at\x18\t \x01(\x03R\vactivatedAt\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\n" +
+	" \x01(\x03R\tcreatedAt\"\x8c\x01\n" +
+	"\rUserQuotaInfo\x12\x12\n" +
+	"\x04type\x18\x01 \x01(\tR\x04type\x12\x1f\n" +
+	"\vdaily_limit\x18\x02 \x01(\x05R\n" +
+	"dailyLimit\x12\x1d\n" +
+	"\n" +
+	"used_today\x18\x03 \x01(\x05R\tusedToday\x12'\n" +
+	"\x0fremaining_today\x18\x04 \x01(\x05R\x0eremainingToday\"9\n" +
+	"\rInviteSummary\x12\x14\n" +
+	"\x05total\x18\x01 \x01(\x05R\x05total\x12\x12\n" +
+	"\x04used\x18\x02 \x01(\x05R\x04used\"m\n" +
+	"\x12UserDetailResponse\x12\x12\n" +
+	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\x12)\n" +
+	"\x04data\x18\x03 \x01(\v2\x15.admin.UserDetailDataR\x04data\"\xd8\x05\n" +
+	"\x0eUserDetailData\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x14\n" +
+	"\x05phone\x18\x02 \x01(\tR\x05phone\x12=\n" +
+	"\rphone_history\x18\x03 \x03(\v2\x18.admin.PhoneChangeRecordR\fphoneHistory\x12\x1a\n" +
+	"\bnickname\x18\x04 \x01(\tR\bnickname\x12\x1d\n" +
+	"\n" +
+	"avatar_url\x18\x05 \x01(\tR\tavatarUrl\x12#\n" +
+	"\ridentity_type\x18\x06 \x01(\tR\fidentityType\x12\x19\n" +
+	"\borg_name\x18\a \x01(\tR\aorgName\x12%\n" +
+	"\x0eannual_clients\x18\b \x01(\x05R\rannualClients\x12\x16\n" +
+	"\x06status\x18\t \x01(\tR\x06status\x12*\n" +
+	"\x11status_updated_at\x18\n" +
+	" \x01(\x03R\x0fstatusUpdatedAt\x12\x1d\n" +
+	"\n" +
+	"applied_at\x18\v \x01(\x03R\tappliedAt\x12!\n" +
+	"\factivated_at\x18\f \x01(\x03R\vactivatedAt\x12!\n" +
+	"\factivated_by\x18\r \x01(\tR\vactivatedBy\x121\n" +
+	"\x15activated_by_admin_id\x18\x0e \x01(\tR\x12activatedByAdminId\x12%\n" +
+	"\x0eactivated_code\x18\x0f \x01(\tR\ractivatedCode\x12,\n" +
+	"\ainviter\x18\x10 \x01(\v2\x12.admin.InviterInfoR\ainviter\x12*\n" +
+	"\x05quota\x18\x11 \x01(\v2\x14.admin.UserQuotaInfoR\x05quota\x12:\n" +
+	"\finvite_codes\x18\x12 \x03(\v2\x17.admin.InviteCodeDetailR\vinviteCodes\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\x13 \x01(\x03R\tcreatedAt\"l\n" +
+	"\x11PhoneChangeRecord\x12\x1b\n" +
+	"\told_phone\x18\x01 \x01(\tR\boldPhone\x12\x1b\n" +
+	"\tnew_phone\x18\x02 \x01(\tR\bnewPhone\x12\x1d\n" +
+	"\n" +
+	"changed_at\x18\x03 \x01(\x03R\tchangedAt\"\x87\x01\n" +
+	"\vInviterInfo\x12\x12\n" +
+	"\x04kind\x18\x01 \x01(\tR\x04kind\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\tR\x06userId\x12\x14\n" +
+	"\x05phone\x18\x03 \x01(\tR\x05phone\x12\x1a\n" +
+	"\bnickname\x18\x04 \x01(\tR\bnickname\x12\x19\n" +
+	"\badmin_id\x18\x05 \x01(\tR\aadminId\"\xb5\x01\n" +
+	"\x10InviteCodeDetail\x12\x12\n" +
+	"\x04code\x18\x01 \x01(\tR\x04code\x12\x12\n" +
+	"\x04type\x18\x02 \x01(\tR\x04type\x12\x16\n" +
+	"\x06status\x18\x03 \x01(\tR\x06status\x12)\n" +
+	"\aused_by\x18\x04 \x01(\v2\x10.admin.UserBriefR\x06usedBy\x12\x17\n" +
+	"\aused_at\x18\x05 \x01(\x03R\x06usedAt\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\x06 \x01(\x03R\tcreatedAt\"V\n" +
+	"\tUserBrief\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x1a\n" +
+	"\bnickname\x18\x02 \x01(\tR\bnickname\x12\x14\n" +
+	"\x05phone\x18\x03 \x01(\tR\x05phone\"u\n" +
+	"\x16UserOperationsResponse\x12\x12\n" +
+	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\x12-\n" +
+	"\x04data\x18\x03 \x01(\v2\x19.admin.UserOperationsDataR\x04data\"p\n" +
+	"\x12UserOperationsData\x12,\n" +
+	"\tpage_info\x18\x01 \x01(\v2\x0f.admin.PageInfoR\bpageInfo\x12,\n" +
+	"\x05items\x18\x02 \x03(\v2\x16.admin.OperationRecordR\x05items\"\x99\x01\n" +
+	"\x0fOperationRecord\x12\x1c\n" +
+	"\toperation\x18\x01 \x01(\tR\toperation\x12\x16\n" +
+	"\x06params\x18\x02 \x01(\tR\x06params\x12\x16\n" +
+	"\x06reason\x18\x03 \x01(\tR\x06reason\x12\x19\n" +
+	"\badmin_id\x18\x04 \x01(\tR\aadminId\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\x05 \x01(\x03R\tcreatedAt\"\xa4\x03\n" +
+	"\x0fInviteCodeQuery\x12\x12\n" +
+	"\x04code\x18\x01 \x01(\tR\x04code\x12\x19\n" +
+	"\bbatch_id\x18\x02 \x01(\tR\abatchId\x12\x12\n" +
+	"\x04type\x18\x03 \x01(\tR\x04type\x12\x16\n" +
+	"\x06status\x18\x04 \x01(\tR\x06status\x12!\n" +
+	"\finviter_kind\x18\x05 \x01(\tR\vinviterKind\x12&\n" +
+	"\x0finviter_user_id\x18\x06 \x01(\tR\rinviterUserId\x12(\n" +
+	"\x10inviter_admin_id\x18\a \x01(\tR\x0einviterAdminId\x12%\n" +
+	"\x0fused_by_user_id\x18\b \x01(\tR\fusedByUserId\x12/\n" +
+	"\n" +
+	"created_at\x18\t \x01(\v2\x10.admin.TimeRangeR\tcreatedAt\x12\x17\n" +
+	"\asort_by\x18\n" +
+	" \x01(\tR\x06sortBy\x12\x1d\n" +
+	"\n" +
+	"sort_order\x18\v \x01(\tR\tsortOrder\x121\n" +
+	"\n" +
+	"pagination\x18\f \x01(\v2\x11.admin.PaginationR\n" +
+	"pagination\".\n" +
+	"\x16BatchQueryCodesRequest\x12\x14\n" +
+	"\x05codes\x18\x01 \x03(\tR\x05codes\"T\n" +
+	"\x14GenerateCodesRequest\x12\x12\n" +
+	"\x04type\x18\x01 \x01(\tR\x04type\x12\x14\n" +
+	"\x05count\x18\x02 \x01(\x05R\x05count\x12\x12\n" +
+	"\x04note\x18\x03 \x01(\tR\x04note\"F\n" +
+	"\x16RegenerateCodesRequest\x12\x14\n" +
+	"\x05codes\x18\x01 \x03(\tR\x05codes\x12\x16\n" +
+	"\x06reason\x18\x02 \x01(\tR\x06reason\"?\n" +
+	"\x11RevokeCodeRequest\x12\x12\n" +
+	"\x04code\x18\x01 \x01(\tR\x04code\x12\x16\n" +
+	"\x06reason\x18\x02 \x01(\tR\x06reason\"u\n" +
+	"\x16InviteCodeListResponse\x12\x12\n" +
+	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\x12-\n" +
+	"\x04data\x18\x03 \x01(\v2\x19.admin.InviteCodeListDataR\x04data\"s\n" +
+	"\x12InviteCodeListData\x12,\n" +
+	"\tpage_info\x18\x01 \x01(\v2\x0f.admin.PageInfoR\bpageInfo\x12/\n" +
+	"\x05items\x18\x02 \x03(\v2\x19.admin.InviteCodeListItemR\x05items\"\xe8\x02\n" +
+	"\x12InviteCodeListItem\x12\x12\n" +
+	"\x04code\x18\x01 \x01(\tR\x04code\x12\x12\n" +
+	"\x04type\x18\x02 \x01(\tR\x04type\x12\x16\n" +
+	"\x06status\x18\x03 \x01(\tR\x06status\x12\x12\n" +
+	"\x04note\x18\x04 \x01(\tR\x04note\x12!\n" +
+	"\finviter_kind\x18\x05 \x01(\tR\vinviterKind\x12(\n" +
+	"\x10inviter_admin_id\x18\x06 \x01(\tR\x0einviterAdminId\x123\n" +
+	"\finviter_user\x18\a \x01(\v2\x10.admin.UserBriefR\vinviterUser\x12)\n" +
+	"\aused_by\x18\b \x01(\v2\x10.admin.UserBriefR\x06usedBy\x12\x17\n" +
+	"\aused_at\x18\t \x01(\x03R\x06usedAt\x12\x19\n" +
+	"\bbatch_id\x18\n" +
+	" \x01(\tR\abatchId\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\v \x01(\x03R\tcreatedAt\"w\n" +
+	"\x17BatchQueryCodesResponse\x12\x12\n" +
+	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\x12.\n" +
+	"\x04data\x18\x03 \x01(\v2\x1a.admin.BatchQueryCodesDataR\x04data\"c\n" +
+	"\x13BatchQueryCodesData\x12/\n" +
+	"\x05found\x18\x01 \x03(\v2\x19.admin.InviteCodeListItemR\x05found\x12\x1b\n" +
+	"\tnot_found\x18\x02 \x03(\tR\bnotFound\"s\n" +
+	"\x15GenerateCodesResponse\x12\x12\n" +
+	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\x12,\n" +
+	"\x04data\x18\x03 \x01(\v2\x18.admin.GenerateCodesDataR\x04data\"n\n" +
+	"\x11GenerateCodesData\x12\x19\n" +
+	"\bbatch_id\x18\x01 \x01(\tR\abatchId\x12\x14\n" +
+	"\x05codes\x18\x02 \x03(\tR\x05codes\x12\x12\n" +
+	"\x04type\x18\x03 \x01(\tR\x04type\x12\x14\n" +
+	"\x05count\x18\x04 \x01(\x05R\x05count\"w\n" +
+	"\x17RegenerateCodesResponse\x12\x12\n" +
+	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\x12.\n" +
+	"\x04data\x18\x03 \x01(\v2\x1a.admin.RegenerateCodesDataR\x04data\"M\n" +
+	"\x13RegenerateCodesData\x12\x18\n" +
+	"\arevoked\x18\x01 \x03(\tR\arevoked\x12\x1c\n" +
+	"\tgenerated\x18\x02 \x03(\tR\tgenerated\"o\n" +
+	"\x13InviteChainResponse\x12\x12\n" +
+	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\x12*\n" +
+	"\x04data\x18\x03 \x01(\v2\x16.admin.InviteChainDataR\x04data\"\xb2\x01\n" +
+	"\x0fInviteChainData\x12*\n" +
+	"\x04user\x18\x01 \x01(\v2\x16.admin.InviteChainUserR\x04user\x123\n" +
+	"\n" +
+	"invited_by\x18\x02 \x01(\v2\x14.admin.InvitedByInfoR\tinvitedBy\x12>\n" +
+	"\rinvited_users\x18\x03 \x03(\v2\x19.admin.InviteChainInviteeR\finvitedUsers\"\xa2\x01\n" +
+	"\x0fInviteChainUser\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x1a\n" +
+	"\bnickname\x18\x02 \x01(\tR\bnickname\x12\x14\n" +
+	"\x05phone\x18\x03 \x01(\tR\x05phone\x12!\n" +
+	"\factivated_by\x18\x04 \x01(\tR\vactivatedBy\x12!\n" +
+	"\factivated_at\x18\x05 \x01(\x03R\vactivatedAt\"\x9d\x01\n" +
+	"\rInvitedByInfo\x12\x12\n" +
+	"\x04kind\x18\x01 \x01(\tR\x04kind\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\tR\x06userId\x12\x1a\n" +
+	"\bnickname\x18\x03 \x01(\tR\bnickname\x12\x14\n" +
+	"\x05phone\x18\x04 \x01(\tR\x05phone\x12\x19\n" +
+	"\badmin_id\x18\x05 \x01(\tR\aadminId\x12\x12\n" +
+	"\x04code\x18\x06 \x01(\tR\x04code\"\x96\x01\n" +
+	"\x12InviteChainInvitee\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x1a\n" +
+	"\bnickname\x18\x02 \x01(\tR\bnickname\x12\x14\n" +
+	"\x05phone\x18\x03 \x01(\tR\x05phone\x12\x12\n" +
+	"\x04code\x18\x04 \x01(\tR\x04code\x12!\n" +
+	"\factivated_at\x18\x05 \x01(\x03R\vactivatedAt2\x90\x02\n" +
 	"\fAdminService\x12I\n" +
 	"\x05Login\x12\x13.admin.LoginRequest\x1a\x14.admin.LoginResponse\"\x15\x82\xd3\xe4\x93\x02\x0f:\x01*\"\n" +
 	"/api/login\x12M\n" +
@@ -635,7 +4184,26 @@ const file_admin_admin_proto_rawDesc = "" +
 	"\x11AdminInnerService\x12Z\n" +
 	"\n" +
 	"CreateUser\x12\x18.admin.CreateUserRequest\x1a\x19.admin.CreateUserResponse\"\x17\x82\xd3\xe4\x93\x02\x11:\x01*\"\f/inner/users\x12X\n" +
-	"\aGetUser\x12\x15.admin.GetUserRequest\x1a\x16.admin.GetUserResponse\"\x1e\x82\xd3\xe4\x93\x02\x18\x12\x16/inner/users/{user_id}BDZBgithub.com/agent-sapient/immigration-chat-admin-idl-go/proto/adminb\x06proto3"
+	"\aGetUser\x12\x15.admin.GetUserRequest\x1a\x16.admin.GetUserResponse\"\x1e\x82\xd3\xe4\x93\x02\x18\x12\x16/inner/users/{user_id}2\xc9\x04\n" +
+	"\x10AdminUserService\x125\n" +
+	"\bGetUsers\x12\x10.admin.UserQuery\x1a\x17.admin.UserListResponse\x12@\n" +
+	"\rGetUserDetail\x12\x14.admin.UserIdRequest\x1a\x19.admin.UserDetailResponse\x12N\n" +
+	"\x11GetUserOperations\x12\x1a.admin.UserOperationsQuery\x1a\x1d.admin.UserOperationsResponse\x12>\n" +
+	"\fActivateUser\x12\x1a.admin.ActivateUserRequest\x1a\x12.admin.ApiResponse\x124\n" +
+	"\aBanUser\x12\x15.admin.BanUserRequest\x1a\x12.admin.ApiResponse\x128\n" +
+	"\tUnbanUser\x12\x17.admin.UnbanUserRequest\x1a\x12.admin.ApiResponse\x12:\n" +
+	"\n" +
+	"DeleteUser\x12\x18.admin.DeleteUserRequest\x1a\x12.admin.ApiResponse\x12D\n" +
+	"\x11UpdateUserProfile\x12\x1b.admin.UpdateProfileRequest\x1a\x12.admin.ApiResponse\x12:\n" +
+	"\fSetUserQuota\x12\x16.admin.SetQuotaRequest\x1a\x12.admin.ApiResponse2\xcd\x03\n" +
+	"\x12AdminInviteService\x12G\n" +
+	"\x0eGetInviteCodes\x12\x16.admin.InviteCodeQuery\x1a\x1d.admin.InviteCodeListResponse\x12P\n" +
+	"\x0fBatchQueryCodes\x12\x1d.admin.BatchQueryCodesRequest\x1a\x1e.admin.BatchQueryCodesResponse\x12B\n" +
+	"\x0eGetInviteChain\x12\x14.admin.UserIdRequest\x1a\x1a.admin.InviteChainResponse\x12J\n" +
+	"\rGenerateCodes\x12\x1b.admin.GenerateCodesRequest\x1a\x1c.admin.GenerateCodesResponse\x12P\n" +
+	"\x0fRegenerateCodes\x12\x1d.admin.RegenerateCodesRequest\x1a\x1e.admin.RegenerateCodesResponse\x12:\n" +
+	"\n" +
+	"RevokeCode\x12\x18.admin.RevokeCodeRequest\x1a\x12.admin.ApiResponseBDZBgithub.com/agent-sapient/immigration-chat-admin-idl-go/proto/adminb\x06proto3"
 
 var (
 	file_admin_admin_proto_rawDescOnce sync.Once
@@ -649,39 +4217,148 @@ func file_admin_admin_proto_rawDescGZIP() []byte {
 	return file_admin_admin_proto_rawDescData
 }
 
-var file_admin_admin_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
+var file_admin_admin_proto_msgTypes = make([]protoimpl.MessageInfo, 53)
 var file_admin_admin_proto_goTypes = []any{
-	(*User)(nil),                 // 0: admin.User
-	(*CreateUserRequest)(nil),    // 1: admin.CreateUserRequest
-	(*CreateUserResponse)(nil),   // 2: admin.CreateUserResponse
-	(*GetUserRequest)(nil),       // 3: admin.GetUserRequest
-	(*GetUserResponse)(nil),      // 4: admin.GetUserResponse
-	(*LoginRequest)(nil),         // 5: admin.LoginRequest
-	(*LoginResponse)(nil),        // 6: admin.LoginResponse
-	(*LogoutRequest)(nil),        // 7: admin.LogoutRequest
-	(*LogoutResponse)(nil),       // 8: admin.LogoutResponse
-	(*RefreshTokenRequest)(nil),  // 9: admin.RefreshTokenRequest
-	(*RefreshTokenResponse)(nil), // 10: admin.RefreshTokenResponse
+	(*User)(nil),                    // 0: admin.User
+	(*CreateUserRequest)(nil),       // 1: admin.CreateUserRequest
+	(*CreateUserResponse)(nil),      // 2: admin.CreateUserResponse
+	(*GetUserRequest)(nil),          // 3: admin.GetUserRequest
+	(*GetUserResponse)(nil),         // 4: admin.GetUserResponse
+	(*LoginRequest)(nil),            // 5: admin.LoginRequest
+	(*LoginResponse)(nil),           // 6: admin.LoginResponse
+	(*LogoutRequest)(nil),           // 7: admin.LogoutRequest
+	(*LogoutResponse)(nil),          // 8: admin.LogoutResponse
+	(*RefreshTokenRequest)(nil),     // 9: admin.RefreshTokenRequest
+	(*RefreshTokenResponse)(nil),    // 10: admin.RefreshTokenResponse
+	(*UserIdRequest)(nil),           // 11: admin.UserIdRequest
+	(*UserQuery)(nil),               // 12: admin.UserQuery
+	(*ActivateUserRequest)(nil),     // 13: admin.ActivateUserRequest
+	(*BanUserRequest)(nil),          // 14: admin.BanUserRequest
+	(*UnbanUserRequest)(nil),        // 15: admin.UnbanUserRequest
+	(*DeleteUserRequest)(nil),       // 16: admin.DeleteUserRequest
+	(*UpdateProfileRequest)(nil),    // 17: admin.UpdateProfileRequest
+	(*SetQuotaRequest)(nil),         // 18: admin.SetQuotaRequest
+	(*UserOperationsQuery)(nil),     // 19: admin.UserOperationsQuery
+	(*UserListResponse)(nil),        // 20: admin.UserListResponse
+	(*UserListData)(nil),            // 21: admin.UserListData
+	(*UserListItem)(nil),            // 22: admin.UserListItem
+	(*UserQuotaInfo)(nil),           // 23: admin.UserQuotaInfo
+	(*InviteSummary)(nil),           // 24: admin.InviteSummary
+	(*UserDetailResponse)(nil),      // 25: admin.UserDetailResponse
+	(*UserDetailData)(nil),          // 26: admin.UserDetailData
+	(*PhoneChangeRecord)(nil),       // 27: admin.PhoneChangeRecord
+	(*InviterInfo)(nil),             // 28: admin.InviterInfo
+	(*InviteCodeDetail)(nil),        // 29: admin.InviteCodeDetail
+	(*UserBrief)(nil),               // 30: admin.UserBrief
+	(*UserOperationsResponse)(nil),  // 31: admin.UserOperationsResponse
+	(*UserOperationsData)(nil),      // 32: admin.UserOperationsData
+	(*OperationRecord)(nil),         // 33: admin.OperationRecord
+	(*InviteCodeQuery)(nil),         // 34: admin.InviteCodeQuery
+	(*BatchQueryCodesRequest)(nil),  // 35: admin.BatchQueryCodesRequest
+	(*GenerateCodesRequest)(nil),    // 36: admin.GenerateCodesRequest
+	(*RegenerateCodesRequest)(nil),  // 37: admin.RegenerateCodesRequest
+	(*RevokeCodeRequest)(nil),       // 38: admin.RevokeCodeRequest
+	(*InviteCodeListResponse)(nil),  // 39: admin.InviteCodeListResponse
+	(*InviteCodeListData)(nil),      // 40: admin.InviteCodeListData
+	(*InviteCodeListItem)(nil),      // 41: admin.InviteCodeListItem
+	(*BatchQueryCodesResponse)(nil), // 42: admin.BatchQueryCodesResponse
+	(*BatchQueryCodesData)(nil),     // 43: admin.BatchQueryCodesData
+	(*GenerateCodesResponse)(nil),   // 44: admin.GenerateCodesResponse
+	(*GenerateCodesData)(nil),       // 45: admin.GenerateCodesData
+	(*RegenerateCodesResponse)(nil), // 46: admin.RegenerateCodesResponse
+	(*RegenerateCodesData)(nil),     // 47: admin.RegenerateCodesData
+	(*InviteChainResponse)(nil),     // 48: admin.InviteChainResponse
+	(*InviteChainData)(nil),         // 49: admin.InviteChainData
+	(*InviteChainUser)(nil),         // 50: admin.InviteChainUser
+	(*InvitedByInfo)(nil),           // 51: admin.InvitedByInfo
+	(*InviteChainInvitee)(nil),      // 52: admin.InviteChainInvitee
+	(*TimeRange)(nil),               // 53: admin.TimeRange
+	(*Pagination)(nil),              // 54: admin.Pagination
+	(*PageInfo)(nil),                // 55: admin.PageInfo
+	(*ApiResponse)(nil),             // 56: admin.ApiResponse
 }
 var file_admin_admin_proto_depIdxs = []int32{
 	0,  // 0: admin.CreateUserResponse.user:type_name -> admin.User
 	0,  // 1: admin.GetUserResponse.user:type_name -> admin.User
 	0,  // 2: admin.LoginResponse.user:type_name -> admin.User
-	5,  // 3: admin.AdminService.Login:input_type -> admin.LoginRequest
-	7,  // 4: admin.AdminService.Logout:input_type -> admin.LogoutRequest
-	9,  // 5: admin.AdminService.RefreshToken:input_type -> admin.RefreshTokenRequest
-	1,  // 6: admin.AdminInnerService.CreateUser:input_type -> admin.CreateUserRequest
-	3,  // 7: admin.AdminInnerService.GetUser:input_type -> admin.GetUserRequest
-	6,  // 8: admin.AdminService.Login:output_type -> admin.LoginResponse
-	8,  // 9: admin.AdminService.Logout:output_type -> admin.LogoutResponse
-	10, // 10: admin.AdminService.RefreshToken:output_type -> admin.RefreshTokenResponse
-	2,  // 11: admin.AdminInnerService.CreateUser:output_type -> admin.CreateUserResponse
-	4,  // 12: admin.AdminInnerService.GetUser:output_type -> admin.GetUserResponse
-	8,  // [8:13] is the sub-list for method output_type
-	3,  // [3:8] is the sub-list for method input_type
-	3,  // [3:3] is the sub-list for extension type_name
-	3,  // [3:3] is the sub-list for extension extendee
-	0,  // [0:3] is the sub-list for field type_name
+	53, // 3: admin.UserQuery.created_at:type_name -> admin.TimeRange
+	53, // 4: admin.UserQuery.activated_at:type_name -> admin.TimeRange
+	54, // 5: admin.UserQuery.pagination:type_name -> admin.Pagination
+	54, // 6: admin.UserOperationsQuery.pagination:type_name -> admin.Pagination
+	21, // 7: admin.UserListResponse.data:type_name -> admin.UserListData
+	55, // 8: admin.UserListData.page_info:type_name -> admin.PageInfo
+	22, // 9: admin.UserListData.items:type_name -> admin.UserListItem
+	23, // 10: admin.UserListItem.quota:type_name -> admin.UserQuotaInfo
+	24, // 11: admin.UserListItem.invite_summary:type_name -> admin.InviteSummary
+	26, // 12: admin.UserDetailResponse.data:type_name -> admin.UserDetailData
+	27, // 13: admin.UserDetailData.phone_history:type_name -> admin.PhoneChangeRecord
+	28, // 14: admin.UserDetailData.inviter:type_name -> admin.InviterInfo
+	23, // 15: admin.UserDetailData.quota:type_name -> admin.UserQuotaInfo
+	29, // 16: admin.UserDetailData.invite_codes:type_name -> admin.InviteCodeDetail
+	30, // 17: admin.InviteCodeDetail.used_by:type_name -> admin.UserBrief
+	32, // 18: admin.UserOperationsResponse.data:type_name -> admin.UserOperationsData
+	55, // 19: admin.UserOperationsData.page_info:type_name -> admin.PageInfo
+	33, // 20: admin.UserOperationsData.items:type_name -> admin.OperationRecord
+	53, // 21: admin.InviteCodeQuery.created_at:type_name -> admin.TimeRange
+	54, // 22: admin.InviteCodeQuery.pagination:type_name -> admin.Pagination
+	40, // 23: admin.InviteCodeListResponse.data:type_name -> admin.InviteCodeListData
+	55, // 24: admin.InviteCodeListData.page_info:type_name -> admin.PageInfo
+	41, // 25: admin.InviteCodeListData.items:type_name -> admin.InviteCodeListItem
+	30, // 26: admin.InviteCodeListItem.inviter_user:type_name -> admin.UserBrief
+	30, // 27: admin.InviteCodeListItem.used_by:type_name -> admin.UserBrief
+	43, // 28: admin.BatchQueryCodesResponse.data:type_name -> admin.BatchQueryCodesData
+	41, // 29: admin.BatchQueryCodesData.found:type_name -> admin.InviteCodeListItem
+	45, // 30: admin.GenerateCodesResponse.data:type_name -> admin.GenerateCodesData
+	47, // 31: admin.RegenerateCodesResponse.data:type_name -> admin.RegenerateCodesData
+	49, // 32: admin.InviteChainResponse.data:type_name -> admin.InviteChainData
+	50, // 33: admin.InviteChainData.user:type_name -> admin.InviteChainUser
+	51, // 34: admin.InviteChainData.invited_by:type_name -> admin.InvitedByInfo
+	52, // 35: admin.InviteChainData.invited_users:type_name -> admin.InviteChainInvitee
+	5,  // 36: admin.AdminService.Login:input_type -> admin.LoginRequest
+	7,  // 37: admin.AdminService.Logout:input_type -> admin.LogoutRequest
+	9,  // 38: admin.AdminService.RefreshToken:input_type -> admin.RefreshTokenRequest
+	1,  // 39: admin.AdminInnerService.CreateUser:input_type -> admin.CreateUserRequest
+	3,  // 40: admin.AdminInnerService.GetUser:input_type -> admin.GetUserRequest
+	12, // 41: admin.AdminUserService.GetUsers:input_type -> admin.UserQuery
+	11, // 42: admin.AdminUserService.GetUserDetail:input_type -> admin.UserIdRequest
+	19, // 43: admin.AdminUserService.GetUserOperations:input_type -> admin.UserOperationsQuery
+	13, // 44: admin.AdminUserService.ActivateUser:input_type -> admin.ActivateUserRequest
+	14, // 45: admin.AdminUserService.BanUser:input_type -> admin.BanUserRequest
+	15, // 46: admin.AdminUserService.UnbanUser:input_type -> admin.UnbanUserRequest
+	16, // 47: admin.AdminUserService.DeleteUser:input_type -> admin.DeleteUserRequest
+	17, // 48: admin.AdminUserService.UpdateUserProfile:input_type -> admin.UpdateProfileRequest
+	18, // 49: admin.AdminUserService.SetUserQuota:input_type -> admin.SetQuotaRequest
+	34, // 50: admin.AdminInviteService.GetInviteCodes:input_type -> admin.InviteCodeQuery
+	35, // 51: admin.AdminInviteService.BatchQueryCodes:input_type -> admin.BatchQueryCodesRequest
+	11, // 52: admin.AdminInviteService.GetInviteChain:input_type -> admin.UserIdRequest
+	36, // 53: admin.AdminInviteService.GenerateCodes:input_type -> admin.GenerateCodesRequest
+	37, // 54: admin.AdminInviteService.RegenerateCodes:input_type -> admin.RegenerateCodesRequest
+	38, // 55: admin.AdminInviteService.RevokeCode:input_type -> admin.RevokeCodeRequest
+	6,  // 56: admin.AdminService.Login:output_type -> admin.LoginResponse
+	8,  // 57: admin.AdminService.Logout:output_type -> admin.LogoutResponse
+	10, // 58: admin.AdminService.RefreshToken:output_type -> admin.RefreshTokenResponse
+	2,  // 59: admin.AdminInnerService.CreateUser:output_type -> admin.CreateUserResponse
+	4,  // 60: admin.AdminInnerService.GetUser:output_type -> admin.GetUserResponse
+	20, // 61: admin.AdminUserService.GetUsers:output_type -> admin.UserListResponse
+	25, // 62: admin.AdminUserService.GetUserDetail:output_type -> admin.UserDetailResponse
+	31, // 63: admin.AdminUserService.GetUserOperations:output_type -> admin.UserOperationsResponse
+	56, // 64: admin.AdminUserService.ActivateUser:output_type -> admin.ApiResponse
+	56, // 65: admin.AdminUserService.BanUser:output_type -> admin.ApiResponse
+	56, // 66: admin.AdminUserService.UnbanUser:output_type -> admin.ApiResponse
+	56, // 67: admin.AdminUserService.DeleteUser:output_type -> admin.ApiResponse
+	56, // 68: admin.AdminUserService.UpdateUserProfile:output_type -> admin.ApiResponse
+	56, // 69: admin.AdminUserService.SetUserQuota:output_type -> admin.ApiResponse
+	39, // 70: admin.AdminInviteService.GetInviteCodes:output_type -> admin.InviteCodeListResponse
+	42, // 71: admin.AdminInviteService.BatchQueryCodes:output_type -> admin.BatchQueryCodesResponse
+	48, // 72: admin.AdminInviteService.GetInviteChain:output_type -> admin.InviteChainResponse
+	44, // 73: admin.AdminInviteService.GenerateCodes:output_type -> admin.GenerateCodesResponse
+	46, // 74: admin.AdminInviteService.RegenerateCodes:output_type -> admin.RegenerateCodesResponse
+	56, // 75: admin.AdminInviteService.RevokeCode:output_type -> admin.ApiResponse
+	56, // [56:76] is the sub-list for method output_type
+	36, // [36:56] is the sub-list for method input_type
+	36, // [36:36] is the sub-list for extension type_name
+	36, // [36:36] is the sub-list for extension extendee
+	0,  // [0:36] is the sub-list for field type_name
 }
 
 func init() { file_admin_admin_proto_init() }
@@ -689,15 +4366,18 @@ func file_admin_admin_proto_init() {
 	if File_admin_admin_proto != nil {
 		return
 	}
+	file_admin_admin_common_proto_init()
+	file_admin_admin_proto_msgTypes[17].OneofWrappers = []any{}
+	file_admin_admin_proto_msgTypes[18].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_admin_admin_proto_rawDesc), len(file_admin_admin_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   11,
+			NumMessages:   53,
 			NumExtensions: 0,
-			NumServices:   2,
+			NumServices:   4,
 		},
 		GoTypes:           file_admin_admin_proto_goTypes,
 		DependencyIndexes: file_admin_admin_proto_depIdxs,
